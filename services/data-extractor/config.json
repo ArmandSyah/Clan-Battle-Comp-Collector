@@ -1,0 +1,10 @@
+{
+    "temp_assets_directory": "temp_assets",
+    "database": {
+        "current_hash": "3710cc9a6bc2e60da40e92fc7dc16683",
+        "current_truth_version": "10034400",
+        "master_db_directory": "database",
+        "max_test_amount": 20,
+        "test_multiplier": 10
+    }
+}
