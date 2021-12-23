@@ -117,8 +117,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-env
-venv
 
 # Spyder project settings
 .spyderproject
@@ -144,4 +142,7 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+.vscode
+
+database/
 # End of https://www.toptal.com/developers/gitignore/api/python
