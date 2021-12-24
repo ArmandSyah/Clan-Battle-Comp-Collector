@@ -8,6 +8,7 @@ from src.utils.config_reader import ConfigReader
 from src.utils.env_reader import EnvReader
 from src.utils.master_db_reader import MasterDBReader
 from src.utils.translation_service import TranslationService
+from src.bosses_pipeline import BossesPipeline
         
 if __name__ == "__main__":
     config_reader = ConfigReader('config.json')
@@ -32,7 +33,10 @@ if __name__ == "__main__":
     if not os.path.exists(os.path.join(current_dir, config_reader.read('pipeline_results_directory'))):
         os.makedirs(os.path.join(current_dir, config_reader.read('pipeline_results_directory')))
     
-    playable_units_pipeline = PlayableUnitsPipeline(config_reader, master_db_reader, kakasi, translator)
-    playable_units_pipeline.build_character_json()
+    # playable_units_pipeline = PlayableUnitsPipeline(config_reader, master_db_reader, kakasi, translator)
+    # playable_units_pipeline.build_character_json()
+    
+    bosses_pipeline = BossesPipeline(config_reader, master_db_reader, translator)
+    bosses_pipeline.build_bosses_json()
     
     master_db_reader.close_connection()
