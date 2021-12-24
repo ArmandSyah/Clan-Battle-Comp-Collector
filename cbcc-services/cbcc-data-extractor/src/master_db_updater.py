@@ -26,13 +26,11 @@ class MasterDBUpdater:
             os.makedirs(self.database_dir_path)
         
     def check_and_update_master_db(self):
-        current_truth_version = self.config_reader.read("database", "current_truth_version")
-        
         initial_load = not os.path.exists(os.path.join(self.database_dir_path, f'master_{self.current_hash}.db'))
         
         latest_truth_version, latest_hash = self.get_latest_truth_version_and_hash()
             
-        if (not initial_load and latest_truth_version == current_truth_version):
+        if (not initial_load and latest_truth_version == self.current_truth_version):
             print("Current truth version matches the current latest truth version, no master database updates required.")
         else:
             print("New truth version and hash required (or there was no initial load), beginning new master db retrieval")

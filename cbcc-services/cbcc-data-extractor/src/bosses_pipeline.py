@@ -23,8 +23,7 @@ class BossesPipeline:
                                 from clan_battle_2_map_data 
                                 where clan_battle_id=(select clan_battle_id 
                                                     from clan_battle_period 
-                                                    order by start_time desc LIMIT 1)
-                                LIMIT 2;
+                                                    order by start_time desc LIMIT 1);
                                 '''
                                 
         clan_battle_info_results = self.master_db_reader.query_master_db(clan_battle_info_query)

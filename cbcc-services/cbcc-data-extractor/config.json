@@ -1,4 +1,5 @@
 {
+    "manifest_directory": "manifest",
     "pipeline_results_directory": "pipeline_results",
     "temp_assets_directory": "temp_assets",
     "latest_version_endpoint": "https://redive.estertion.win/last_version_jp.json",

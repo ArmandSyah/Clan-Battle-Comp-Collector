@@ -9,6 +9,7 @@ from src.utils.env_reader import EnvReader
 from src.utils.master_db_reader import MasterDBReader
 from src.utils.translation_service import TranslationService
 from src.bosses_pipeline import BossesPipeline
+from src.manifest_updater import ManifestUpdater
         
 if __name__ == "__main__":
     config_reader = ConfigReader('config.json')
@@ -26,6 +27,9 @@ if __name__ == "__main__":
     master_db_path = os.path.join(current_dir, database_directory, f'master_{current_hash}.db')
     master_db_reader = MasterDBReader(master_db_path)
     
+    manifest_updater = ManifestUpdater(config_reader)
+    manifest_updater.get_unit_manifest()
+    
     kakasi = pykakasi.kakasi()
     
     translator = TranslationService(config_reader, env_reader)
@@ -33,8 +37,8 @@ if __name__ == "__main__":
     if not os.path.exists(os.path.join(current_dir, config_reader.read('pipeline_results_directory'))):
         os.makedirs(os.path.join(current_dir, config_reader.read('pipeline_results_directory')))
     
-    # playable_units_pipeline = PlayableUnitsPipeline(config_reader, master_db_reader, kakasi, translator)
-    # playable_units_pipeline.build_character_json()
+    playable_units_pipeline = PlayableUnitsPipeline(config_reader, master_db_reader, kakasi, translator)
+    playable_units_pipeline.build_character_json()
     
     bosses_pipeline = BossesPipeline(config_reader, master_db_reader, translator)
     bosses_pipeline.build_bosses_json()
