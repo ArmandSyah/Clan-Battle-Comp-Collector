@@ -145,4 +145,5 @@ cython_debug/
 .vscode
 
 database/
+pipeline_results/
 # End of https://www.toptal.com/developers/gitignore/api/python

@@ -1,4 +1,5 @@
 {
+    "pipeline_results_directory": "pipeline_results",
     "temp_assets_directory": "temp_assets",
     "latest_version_endpoint": "https://redive.estertion.win/last_version_jp.json",
     "priconne_cdn_host": "http://prd-priconne-redive.akamaized.net",
@@ -8,5 +9,12 @@
         "master_db_directory": "database",
         "max_test_amount": 10,
         "test_multiplier": 10
+    },
+    "translation_apis": {
+        "google_translate": true,
+        "mymemory_translate": true,
+        "deepl_translate": false,
+        "yandex_translate": false,
+        "microsoft_translate": true
     }
 }

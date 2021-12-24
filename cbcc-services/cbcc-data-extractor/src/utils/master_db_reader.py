@@ -1,6 +1,7 @@
 import sqlite3
 import pandas as pd
 import os
+import unicodedata
 
 class MasterDBReader:
     def __init__(self, master_db_path) -> None:
@@ -11,7 +12,7 @@ class MasterDBReader:
         self.master_db_connection = None
         self.start_connection()
     
-    def start_connection(self):
+    def start_connection(self):        
         self.master_db_connection = sqlite3.connect(self.master_db_path)
         print("Connection to master db has begun")
         
@@ -22,8 +23,6 @@ class MasterDBReader:
         else:
             print("DB error occured while trying to close, it might not even be turned on")
             
-    def query_master_db(self, sql_query) -> pd.DataFrame:
-        return pd.read_sql_query(sql_query, self.master_db_connection)
         
     def is_connected(self):
         try:
@@ -33,3 +32,13 @@ class MasterDBReader:
         except sqlite3.Error:
             print("Currently not connected to master db")
             return False
+        
+    def query_master_db(self, sql_query) -> pd.DataFrame:
+        df = pd.read_sql_query(sql_query, self.master_db_connection)
+        for column in df.columns:
+            df[column] = df[column].map(self.normalize_query_results)
+        
+        return df
+    
+    def normalize_query_results(self, s) -> str:
+        return unicodedata.normalize('NFKC', str(s))
