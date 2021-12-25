@@ -6,13 +6,15 @@ from pykakasi.kakasi import Kakasi
 from src.utils.master_db_reader import MasterDBReader
 from src.utils.config_reader import ConfigReader
 from src.utils.translation_service import TranslationService
+from src.utils.image_extraction_service import ImageExtractionService
 
 class PlayableUnitsPipeline:
-    def __init__(self, config_reader: ConfigReader, master_db_reader: MasterDBReader, kakasi: Kakasi, translator: TranslationService) -> None:
+    def __init__(self, config_reader: ConfigReader, master_db_reader: MasterDBReader, kakasi: Kakasi, translator: TranslationService, image_extraction_service: ImageExtractionService) -> None:
         self.config_reader = config_reader
         self.master_db_reader = master_db_reader
         self.kakasi = kakasi
         self.translator = translator
+        self.image_extraction_service = image_extraction_service
         
         self.current_thematics = dict()
         
@@ -31,10 +33,12 @@ class PlayableUnitsPipeline:
         
         character_data = []
         
-        for _, row in character_results.iterrows():
-            print(f"Processing character {row['unit_id']}: {row['unit_name']}")
+        for _, character in character_results.iterrows():
+            unit_id = character['unit_id']
+            
+            print(f"Processing character {unit_id}: {character['unit_name']}")
             # thematics
-            jp_thematic = self.check_unit_thematic(row["unit_name"])
+            jp_thematic = self.check_unit_thematic(character["unit_name"])
             
             if not jp_thematic in self.current_thematics:
                 en_thematic = self.translator.translate(jp_thematic)
@@ -42,17 +46,19 @@ class PlayableUnitsPipeline:
             else:
                 en_thematic = self.current_thematics[jp_thematic]
             
-            name = row["unit_name"].split('(')[0]
+            name = character["unit_name"].split('(')[0]
             # Get the romanized string of the katakana
             japanese_conversion_results = self.kakasi.convert(name)
             for japanese_conversion_result in japanese_conversion_results:
                 romanized_name = japanese_conversion_result['hepburn']
             
-            jp_description = row["comment"].replace(r'\n', '')
+            jp_description = character["comment"].replace(r'\n', '')
             en_description = self.translator.translate(jp_description)
             
+            self.image_extraction_service.make_unit_icons(romanized_name, unit_id, playable_character=True, thematic=en_thematic)
+            
             character = {
-                'unit_id': row["unit_id"],
+                'unit_id': unit_id,
                 'unit_name': name,
                 'unit_name_en': romanized_name,
                 'jp_thematic': jp_thematic,

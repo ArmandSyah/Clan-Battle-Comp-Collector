@@ -146,4 +146,5 @@ cython_debug/
 
 database/
 pipeline_results/
+temp_assets/
 # End of https://www.toptal.com/developers/gitignore/api/python

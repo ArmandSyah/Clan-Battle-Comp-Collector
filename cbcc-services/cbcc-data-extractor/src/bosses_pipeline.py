@@ -4,12 +4,14 @@ import os
 from src.utils.master_db_reader import MasterDBReader
 from src.utils.config_reader import ConfigReader
 from src.utils.translation_service import TranslationService
+from src.utils.image_extraction_service import ImageExtractionService
 
 class BossesPipeline:
-    def __init__(self, config_reader: ConfigReader, master_db_reader: MasterDBReader, translator: TranslationService) -> None:
+    def __init__(self, config_reader: ConfigReader, master_db_reader: MasterDBReader, translator: TranslationService, image_extraction_service: ImageExtractionService) -> None:
         self.config_reader = config_reader
         self.master_db_reader = master_db_reader
         self.translator = translator
+        self.image_extraction_service = image_extraction_service
         
         ## Configs
         self.pipeline_results_directory = config_reader.read('pipeline_results_directory')
@@ -55,11 +57,12 @@ class BossesPipeline:
             }
             
             for _, boss_info in boss_data_results.iterrows():
+                unit_id = boss_info['unit_id']
                 
                 # Checking for cached translations if they exist
                 cached_translation = None
-                if boss_info["unit_id"] in self.cached_translations:
-                    cached_translation = self.cached_translations[boss_info["unit_id"]]
+                if unit_id in self.cached_translations:
+                    cached_translation = self.cached_translations[unit_id]
                 
                 # Name Handling
                 jp_name = boss_info['unit_name'] if cached_translation is None else cached_translation['jp_name']
@@ -77,12 +80,14 @@ class BossesPipeline:
                         'jp_description': jp_description,
                         'en_description': en_description
                     }
-                    self.cached_translations[boss_info["unit_id"]] = cached_translation
+                    self.cached_translations[unit_id] = cached_translation
+                
+                self.image_extraction_service.make_unit_icons(en_name, unit_id)
                 
                 boss = {
                     'jp_name': jp_name,
                     'en_name': en_name,
-                    'unit_id': boss_info['unit_id'],
+                    'unit_id': unit_id,
                     'level': boss_info['level'],
                     'hp': boss_info['hp'],
                     'jp_description': jp_description,

@@ -4,6 +4,11 @@
     "temp_assets_directory": "temp_assets",
     "latest_version_endpoint": "https://redive.estertion.win/last_version_jp.json",
     "priconne_cdn_host": "http://prd-priconne-redive.akamaized.net",
+    "image_extraction": {
+        "temp_assets_directory": "temp_assets",
+        "unity_assets_directory": "unity_assets",
+        "deserialized_assets_directory": "deserialized_assets"
+    },
     "database": {
         "current_hash": "3710cc9a6bc2e60da40e92fc7dc16683",
         "current_truth_version": "10034450",
