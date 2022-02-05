@@ -1,27 +1,58 @@
 import json
+from multiprocessing.dummy import active_children
 import os
 
 from pykakasi.kakasi import Kakasi
 
+from src.models.unit_id_container import UnitIdContainer
 from src.utils.master_db_reader import MasterDBReader
 from src.utils.config_reader import ConfigReader
 from src.utils.translation_service import TranslationService
 from src.utils.image_extraction_service import ImageExtractionService
+from src.utils.imagehandler.image_handler import ImageHandler
 
 class PlayableUnitsPipeline:
-    def __init__(self, config_reader: ConfigReader, master_db_reader: MasterDBReader, kakasi: Kakasi, translator: TranslationService, image_extraction_service: ImageExtractionService) -> None:
+    def __init__(self, config_reader: ConfigReader, master_db_reader: MasterDBReader, kakasi: Kakasi, translator: TranslationService, image_extraction_service: ImageExtractionService, image_handler: ImageHandler) -> None:
         self.config_reader = config_reader
         self.master_db_reader = master_db_reader
         self.kakasi = kakasi
         self.translator = translator
         self.image_extraction_service = image_extraction_service
-        
-        self.current_thematics = dict()
+        self.image_handler = image_handler
         
         ## Configs
         self.pipeline_results_directory = config_reader.read('pipeline_results_directory')
+        self.character_json = config_reader.read("json_pipelines", "character")
+        
+        self.current_thematics = dict()
+        self.retrieved_unit_ids = set()
+        self.character_data = []
+        
+    
+    def retrieve_current_character_info(self):
+        character_json_path = os.path.join(os.getcwd(),self.pipeline_results_directory, self.character_json)
+        
+        if not os.path.exists(character_json_path):
+            print('Character.json doesn\'t exist, retrieving fresh character data')
+            self.current_thematics = dict()
+            self.retrieved_unit_ids = set()
+            self.character_data = []
+            return
+        
+        with open(character_json_path, 'rb') as character_json_file:
+            try:
+                self.character_data = json.load(character_json_file)
+                self.retrieved_unit_ids = set(character['unit_id'] for character in self.character_data)    
+            except (json.JSONDecodeError):
+                print(f'Something went wrong with loading {self.character_json}, retrieving fresh character data')
+                self.current_thematics = dict()
+                self.retrieved_unit_ids = set()
+                self.character_data = []
+            
         
     def build_character_json(self):
+        self.retrieve_current_character_info()
+        
         character_query = '''
                         select unit_id, unit_name, prefab_id, search_area_width, comment
                         from unit_data
@@ -31,10 +62,12 @@ class PlayableUnitsPipeline:
         
         character_results = self.master_db_reader.query_master_db(character_query)
         
-        character_data = []
-        
         for _, character in character_results.iterrows():
             unit_id = character['unit_id']
+            
+            if unit_id in self.retrieved_unit_ids:
+                print(f'Character with unit id {unit_id} has already been processed')
+                continue
             
             print(f"Processing character {unit_id}: {character['unit_name']}")
             # thematics
@@ -48,14 +81,24 @@ class PlayableUnitsPipeline:
             
             name = character["unit_name"].split('(')[0]
             # Get the romanized string of the katakana
-            japanese_conversion_results = self.kakasi.convert(name)
-            for japanese_conversion_result in japanese_conversion_results:
-                romanized_name = japanese_conversion_result['hepburn']
+            romanized_name = self.handle_unit_name(name)
             
-            jp_description = character["comment"].replace(r'\n', '')
+            jp_description = character["comment"]
             en_description = self.translator.translate(jp_description)
             
-            self.image_extraction_service.make_unit_icons(romanized_name, unit_id, playable_character=True, thematic=en_thematic)
+            unit_id_container = UnitIdContainer(unit_id, True)
+            unit_icon_folder_name = self.image_extraction_service.make_unit_icons(romanized_name, unit_id_container, playable_character=True, thematic=en_thematic)
+            
+            ### Checking for existance of icons in the image store first
+            one_star_icon = self.image_handler.check_image_exists(unit_icon_folder_name, unit_id_container.one_star_icon_id)
+            three_star_icon = self.image_handler.check_image_exists(unit_icon_folder_name, unit_id_container.three_star_icon_id)
+            six_star_icon = self.image_handler.check_image_exists(unit_icon_folder_name, unit_id_container.six_star_icon_id)
+            
+            character_icon_locations = {
+                'one_star_icon': one_star_icon if one_star_icon is not None else self.image_handler.store_new_icon_images(unit_icon_folder_name, unit_id_container.one_star_icon_id),
+                'three_star_icon': three_star_icon if three_star_icon is not None else self.image_handler.store_new_icon_images(unit_icon_folder_name, unit_id_container.three_star_icon_id),
+                'six_star_icon': six_star_icon if six_star_icon is not None else self.image_handler.store_new_icon_images(unit_icon_folder_name, unit_id_container.six_star_icon_id)
+            }
             
             character = {
                 'unit_id': unit_id,
@@ -64,18 +107,36 @@ class PlayableUnitsPipeline:
                 'jp_thematic': jp_thematic,
                 'en_thematic': en_thematic,
                 'jp_description': jp_description,
-                'en_description': en_description
+                'en_description': en_description,
+                'range': character['search_area_width'],
+                'character_icon_locations': character_icon_locations
             } 
             
-            character_data.append(character)
+            self.character_data.append(character)
 
         character_json_path = os.path.join(os.getcwd(), self.pipeline_results_directory, 'character.json')
         with open(character_json_path, 'wb') as character_json_file:
-            character_json_file.write(json.dumps(character_data, ensure_ascii=False, indent=4).encode("utf8"))
+            character_json_file.write(json.dumps(self.character_data, ensure_ascii=False, indent=4).encode("utf8"))
         
     def check_unit_thematic(self, unit_name: str):
         if '(' in unit_name and ')' in unit_name:
             start, end = unit_name.index('('), unit_name.index(')')
             return unit_name[start+1:end]
         return ''
+    
+    def handle_unit_name(self, unit_name: str):
+        actual_unit_name = ''
+        if '&' in unit_name:
+            name_portions = unit_name.split('&')
+            for name_portion in name_portions:
+                actual_unit_name = f'{actual_unit_name}&{self.convert_name(name_portion)}' if actual_unit_name != '' else self.convert_name(name_portion)
+            return actual_unit_name
+        return self.convert_name(unit_name)
+    
+    def convert_name(self, name):
+        japanese_conversion_results = self.kakasi.convert(name)
+        for japanese_conversion_result in japanese_conversion_results:
+            acutal_unit_name = japanese_conversion_result['hepburn']
+        return acutal_unit_name
+        
     

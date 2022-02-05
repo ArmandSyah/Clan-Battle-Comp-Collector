@@ -1,22 +1,28 @@
 import json
 import os
 
+from src.models.unit_id_container import UnitIdContainer
 from src.utils.master_db_reader import MasterDBReader
 from src.utils.config_reader import ConfigReader
 from src.utils.translation_service import TranslationService
 from src.utils.image_extraction_service import ImageExtractionService
+from src.utils.imagehandler.image_handler import ImageHandler
 
 class BossesPipeline:
-    def __init__(self, config_reader: ConfigReader, master_db_reader: MasterDBReader, translator: TranslationService, image_extraction_service: ImageExtractionService) -> None:
+    def __init__(self, config_reader: ConfigReader, master_db_reader: MasterDBReader, translator: TranslationService, image_extraction_service: ImageExtractionService, image_handler: ImageHandler) -> None:
         self.config_reader = config_reader
         self.master_db_reader = master_db_reader
         self.translator = translator
         self.image_extraction_service = image_extraction_service
+        self.image_handler = image_handler
         
         ## Configs
         self.pipeline_results_directory = config_reader.read('pipeline_results_directory')
+        self.boss_json = config_reader.read('json_pipelines', 'boss')
         
-        self.cached_translations = dict()
+        self.cached_en_names = dict()
+        self.cached_en_desription_translations = dict()
+        self.cached_boss_icons = dict()
         
     
     def build_bosses_json(self):
@@ -59,30 +65,31 @@ class BossesPipeline:
             for _, boss_info in boss_data_results.iterrows():
                 unit_id = boss_info['unit_id']
                 
-                # Checking for cached translations if they exist
-                cached_translation = None
-                if unit_id in self.cached_translations:
-                    cached_translation = self.cached_translations[unit_id]
-                
                 # Name Handling
-                jp_name = boss_info['unit_name'] if cached_translation is None else cached_translation['jp_name']
-                en_name = self.translator.translate(jp_name) if cached_translation is None else cached_translation['en_name']
+                jp_name = boss_info['unit_name']
+                if jp_name in self.cached_en_names:
+                    en_name = self.cached_en_names[jp_name]
+                else:
+                    en_name = self.translator.translate(jp_name)
+                    self.cached_en_names[jp_name] = en_name
                 
                 # Descriptions
-                jp_description = boss_info["comment"].replace(r'\n', '') if cached_translation is None else cached_translation['jp_description']
-                en_description = self.translator.translate(jp_description) if cached_translation is None else cached_translation['en_description']
+                jp_description = boss_info["comment"]
+                if jp_name in self.cached_en_desription_translations:
+                    en_description = self.cached_en_desription_translations[jp_name]
+                else:
+                    en_description = self.translator.translate(jp_description)
+                    self.cached_en_desription_translations[jp_name] = en_description
                 
-                # Setup cached translation object for future use to reduce repeated work
-                if cached_translation is None:
-                    cached_translation = {
-                        'jp_name': jp_name,
-                        'en_name': en_name,
-                        'jp_description': jp_description,
-                        'en_description': en_description
-                    }
-                    self.cached_translations[unit_id] = cached_translation
-                
-                self.image_extraction_service.make_unit_icons(en_name, unit_id)
+                # Icons
+                if jp_name in self.cached_boss_icons:
+                    boss_icon = self.cached_boss_icons[jp_name]
+                else:
+                    unit_id_container = UnitIdContainer(unit_id, False)
+                    unit_icon_folder_name = self.image_extraction_service.make_unit_icons(en_name, unit_id_container)
+                    boss_icon = self.image_handler.check_image_exists(unit_icon_folder_name, unit_id_container.unit_id)
+                    boss_icon = boss_icon if boss_icon is not None else self.image_handler.store_new_icon_images(unit_icon_folder_name, unit_id_container.unit_id)
+                    self.cached_boss_icons[jp_name] = boss_icon
                 
                 boss = {
                     'jp_name': jp_name,
@@ -91,13 +98,14 @@ class BossesPipeline:
                     'level': boss_info['level'],
                     'hp': boss_info['hp'],
                     'jp_description': jp_description,
-                    'en_description': en_description
+                    'en_description': en_description,
+                    'boss_icon': boss_icon
                 }
                 
                 full_tier['boss_data'].append(boss)
             
             full_clan_battle_data.append(full_tier)
-            
-        boss_json_path = os.path.join(os.getcwd(), self.pipeline_results_directory, 'boss.json')
+                
+        boss_json_path = os.path.join(os.getcwd(), self.pipeline_results_directory, self.boss_json)
         with open(boss_json_path, 'wb') as boss_json_file:
             boss_json_file.write(json.dumps(full_clan_battle_data, ensure_ascii=False, indent=4).encode("utf8")) 

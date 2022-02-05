@@ -11,8 +11,10 @@ from src.utils.translation_service import TranslationService
 from src.bosses_pipeline import BossesPipeline
 from src.manifest_updater import ManifestUpdater
 from src.utils.image_extraction_service import ImageExtractionService
-        
-if __name__ == "__main__":
+from src.utils.imagehandler.image_handler import ImageHandler
+from src.utils.imagehandler.imagestore.aws_image_store import AwsImageStore
+
+def setup():
     config_reader = ConfigReader('config.json')
     env_reader = EnvReader('.env')
     
@@ -37,16 +39,22 @@ if __name__ == "__main__":
     
     image_extraction_service = ImageExtractionService(config_reader)
     
+    aws_image_store = AwsImageStore(env_reader)
+    image_handler = ImageHandler(config_reader, aws_image_store)
+    
     if not os.path.exists(os.path.join(current_dir, config_reader.read('pipeline_results_directory'))):
         os.makedirs(os.path.join(current_dir, config_reader.read('pipeline_results_directory')))
     
     if not os.path.exists(os.path.join(current_dir, config_reader.read('temp_assets_directory'))):
         os.makedirs(os.path.join(current_dir, config_reader.read('temp_assets_directory')))
     
-    playable_units_pipeline = PlayableUnitsPipeline(config_reader, master_db_reader, kakasi, translator, image_extraction_service)
+    playable_units_pipeline = PlayableUnitsPipeline(config_reader, master_db_reader, kakasi, translator, image_extraction_service, image_handler)
     playable_units_pipeline.build_character_json()
     
-    bosses_pipeline = BossesPipeline(config_reader, master_db_reader, translator, image_extraction_service)
+    bosses_pipeline = BossesPipeline(config_reader, master_db_reader, translator, image_extraction_service, image_handler)
     bosses_pipeline.build_bosses_json()
     
     master_db_reader.close_connection()
+        
+if __name__ == "__main__":    
+    setup()

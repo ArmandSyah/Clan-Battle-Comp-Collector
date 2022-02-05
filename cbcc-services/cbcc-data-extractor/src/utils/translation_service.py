@@ -1,5 +1,3 @@
-from collections import namedtuple
-
 from deep_translator import (GoogleTranslator,
                              MicrosoftTranslator,
                              MyMemoryTranslator,

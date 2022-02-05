@@ -9,6 +9,7 @@ from PIL import ImageOps
 
 import struct 
 
+from src.models.unit_id_container import UnitIdContainer
 from src.utils.config_reader import ConfigReader
 
 class ImageExtractionService:
@@ -35,21 +36,23 @@ class ImageExtractionService:
         
         self.unit_asset_file_to_hash_map = {x.split(',')[0]:x.split(',')[1] for x in manifest_lines}
         
-    def make_unit_icons(self, unit_name, unit_id, playable_character=False, thematic=''):
+    def make_unit_icons(self, unit_name, unit_id_container: UnitIdContainer, playable_character=False, thematic='') -> str:
         if self.check_icons_already_exist(unit_name, thematic):
             print("Icons have already been made")
-            return
+            return self.set_full_unit_name(unit_name, thematic)
         
         if (playable_character):
-            one_star_icon_id = f'{unit_id[0:4]}1{unit_id[5]}'
-            three_star_icon_id = f'{unit_id[0:4]}3{unit_id[5]}'
-            six_star_icon_id = f'{unit_id[0:4]}6{unit_id[5]}'
-            
-            self.retrieve_unity_asset_for_character(unit_name, thematic, one_star_icon_id, three_star_icon_id, six_star_icon_id)
+            self.retrieve_unity_asset_for_character(unit_name, 
+                                                    thematic, 
+                                                    unit_id_container.one_star_icon_id, 
+                                                    unit_id_container.three_star_icon_id, 
+                                                    unit_id_container.six_star_icon_id)
             self.deserialize_unity_asset_into_png(unit_name, thematic) 
         else:
-            self.retrieve_unity_asset_for_character(unit_name, thematic, unit_id)
+            self.retrieve_unity_asset_for_character(unit_name, thematic, unit_id_container.unit_id)
             self.deserialize_unity_asset_into_png(unit_name, thematic)
+        
+        return self.set_full_unit_name(unit_name, thematic)
     
     def check_icons_already_exist(self, unit_name, thematic='') -> bool:
         full_unit_name = self.set_full_unit_name(unit_name, thematic)
