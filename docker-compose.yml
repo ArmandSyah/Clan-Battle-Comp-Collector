@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+
+  muimi:
+    build:
+      context: ./cbcc-services/cbcc-data-extractor
+      dockerfile: Dockerfile
+    volumes:
+      - './cbcc-services/cbcc-data-extractor:/usr/src/app'
