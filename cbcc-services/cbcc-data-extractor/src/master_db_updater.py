@@ -61,7 +61,7 @@ class MasterDBUpdater:
         
         i = 0
         while i < self.max_test_amount:
-            truth_version_guess = self.current_truth_version + (i * self.test_multiplier)
+            truth_version_guess = int(self.current_truth_version) + (i * int(self.test_multiplier))
             
             asset_manifest_endpoint = f'{self.priconne_cdn_host}/dl/resources/{truth_version_guess}/Jpn/AssetBundles/Windows/manifest/masterdata_assetmanifest'
             masterdata_assetmanifest_response = requests.get(asset_manifest_endpoint)

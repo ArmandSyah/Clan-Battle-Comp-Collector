@@ -74,7 +74,7 @@ class BossesPipeline:
                     self.cached_en_names[jp_name] = en_name
                 
                 # Descriptions
-                jp_description = boss_info["comment"]
+                jp_description = boss_info["comment"].replace('\n', '')
                 if jp_name in self.cached_en_desription_translations:
                     en_description = self.cached_en_desription_translations[jp_name]
                 else:

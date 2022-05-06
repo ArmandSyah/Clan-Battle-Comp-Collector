@@ -83,7 +83,7 @@ class PlayableUnitsPipeline:
             # Get the romanized string of the katakana
             romanized_name = self.handle_unit_name(name)
             
-            jp_description = character["comment"]
+            jp_description = character["comment"].replace('\n', '')
             en_description = self.translator.translate(jp_description)
             
             unit_id_container = UnitIdContainer(unit_id, True)
