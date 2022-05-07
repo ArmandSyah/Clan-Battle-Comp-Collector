@@ -1,24 +1,20 @@
 import json
 from multiprocessing.dummy import active_children
 import os
-
-from dependency_injector.wiring import Provide
-
-from src.containers import Container
 from src.models.unit_id_container import UnitIdContainer
 
 class PlayableUnitsPipeline:
-    def __init__(self) -> None:
-        self.master_db_reader = Provide[Container.master_db_reader]
-        self.kakasi = Provide[Container.kakasi]
-        self.translator = Provide[Container.translation_service]
-        self.image_extraction_service = Provide[Container.image_extraction_service]
-        self.image_handler = Provide[Container.image_handler]
+    def __init__(self, master_db_reader, kakasi, translator, image_extraction_service, image_handler, config) -> None:
+        self.master_db_reader = master_db_reader
+        self.kakasi = kakasi
+        self.translator = translator
+        self.image_extraction_service = image_extraction_service
+        self.image_handler = image_handler
         
         ## Configs
         current_dir = os.getcwd()
-        self.pipeline_results_directory = Provide[Container.config.directories.pipeline_results_directory]
-        self.character_json = Provide[Container.config.pipeline_results.character]
+        self.pipeline_results_directory = config["directories"]["pipeline_results_directory"]
+        self.character_json = config["pipeline_results"]["character"]
 
         if not os.path.exists(os.path.join(current_dir, self.pipeline_results_directory)):
             os.makedirs(os.path.join(current_dir, self.pipeline_results_directory))

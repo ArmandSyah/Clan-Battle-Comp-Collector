@@ -3,24 +3,21 @@ from deep_translator import (GoogleTranslator,
                              MyMemoryTranslator,
                              YandexTranslator,
                              DeepL)
-from dependency_injector.wiring import Provide
-
-from src.containers import Container
 
 class TranslationService:
-    def __init__(self) -> None:
+    def __init__(self, config) -> None:
         # Translation api keys
-        self.deepl_api_key = Provide[Container.config.translationapikeys.deepl_api_key]
-        self.yandex_api_key = Provide[Container.config.translationapikeys.yandex_api_key]
-        self.microsoft_api_key = Provide[Container.config.translationapikeys.microsoft_api_key]
+        self.deepl_api_key = config["translationapikeys"]["deepl_api_key"]
+        self.yandex_api_key = config["translationapikeys"]["yandex_api_key"]
+        self.microsoft_api_key = config["translationapikeys"]["microsoft_api_key"]
         
         self.translation_apis = dict()
 
-        google_translate = Provide[Container.config.usedtranslationapis.google_translate]
-        mymemory_translate = Provide[Container.config.usedtranslationapis.mymemory_translate]
-        deepl_translate = Provide[Container.config.usedtranslationapis.deepl_translate]
-        yandex_translate = Provide[Container.config.usedtranslationapis.yandex_translate]
-        microsoft_translate = Provide[Container.config.usedtranslationapis.microsoft_translate]
+        google_translate = config["usedtranslationapis"]["google_translate"]
+        mymemory_translate = config["usedtranslationapis"]["mymemory_translate"]
+        deepl_translate = config["usedtranslationapis"]["deepl_translate"]
+        yandex_translate = config["usedtranslationapis"]["yandex_translate"]
+        microsoft_translate = config["usedtranslationapis"]["microsoft_translate"]
         
         if (bool(google_translate)):
             self.translation_apis['google_translate'] = lambda text_to_translate: self._call_google_translate_api(text_to_translate)

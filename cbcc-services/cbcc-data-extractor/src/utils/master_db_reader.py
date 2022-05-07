@@ -4,12 +4,13 @@ import os
 import unicodedata
 
 class MasterDBReader:
-    def __init__(self, master_db_path) -> None:
-        if not os.path.exists(master_db_path):
+    def __init__(self, master_db_directory, master_db) -> None:
+        self.master_db_path = os.path.join(os.getcwd(), master_db_directory, master_db)
+        self.master_db_connection = None
+
+        if not os.path.exists(self.master_db_path):
             raise FileNotFoundError('Master database cannot be found at current location, please double check again')
         
-        self.master_db_path = master_db_path
-        self.master_db_connection = None
         self.start_connection()
     
     def start_connection(self):        

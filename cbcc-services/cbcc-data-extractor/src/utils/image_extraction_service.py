@@ -8,20 +8,18 @@ import unitypack
 from PIL import ImageOps
 
 import struct 
-from dependency_injector.wiring import Provide
 
-from src.containers import Container
 from src.models.unit_id_container import UnitIdContainer
 
 class ImageExtractionService:
-    def __init__(self) -> None: 
+    def __init__(self, config) -> None: 
         ## Read Config values
-        self.priconne_cdn_host = Provide[Container.config.endpoints.priconne_cdn_host]
-        self.manifest_directory = Provide[Container.config.directories.manifest_directory]
-        self.manifest_file = Provide[Container.config.pcrddatabase.manifest_file]
-        self.temp_assets_directory = Provide[Container.config.directories.temp_assets_directory]
-        self.unity_assets_directory = Provide[Container.config.directories.unity_assets_directory]
-        self.deserialized_assets_directory = Provide[Container.config.directories.deserialized_assets_directory]
+        self.priconne_cdn_host = config["endpoints"]["priconne_cdn_host"]
+        self.manifest_directory = config["directories"]["manifest_directory"]
+        self.manifest_file = config["pcrddatabase"]["manifest_file"]
+        self.temp_assets_directory = config["directories"]["temp_assets_directory"]
+        self.unity_assets_directory = config["directories"]["unity_assets_directory"]
+        self.deserialized_assets_directory = config["directories"]["deserialized_assets_directory"]
        
         ## Directory paths
         self.current_dir = os.getcwd()

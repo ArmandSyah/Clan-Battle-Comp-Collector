@@ -4,18 +4,15 @@ import requests
 from requests.exceptions import Timeout
 import os
 import subprocess
-from dependency_injector.wiring import Provide
-
-from src.containers import Container
 
 class MasterDBUpdater:
-    def __init__(self) -> None:
-        self.latest_version_endpoint = Provide[Container.config.endpoints.latest_version_endpoint]
-        self.api_version_directory = Provide[Container.config.directories.api_version_directory]
-        self.api_version = Provide[Container.directories.pcrddatabase.api_version_info]
-        self.database_directory = Provide[Container.config.directories.master_db_directory]
-        self.master_db = Provide[Container.directories.pcrddatabase.master_db]
-        self.priconne_cdn_host = Provide[Container.config.endpoints.priconne_cdn_host]
+    def __init__(self, config) -> None:
+        self.latest_version_endpoint = config["endpoints"]["latest_version_endpoint"]
+        self.api_version_directory = config["directories"]["api_version_directory"]
+        self.api_version = config["pcrddatabase"]["api_version_info"]
+        self.database_directory = config["directories"]["master_db_directory"]
+        self.master_db = config["pcrddatabase"]["master_db"]
+        self.priconne_cdn_host = config["endpoints"]["priconne_cdn_host"]
         
         ## Directory paths
         self.current_dir = os.getcwd()
@@ -37,7 +34,7 @@ class MasterDBUpdater:
 
     def write_current_api_version(self, api_version_json, latest_truth_version, latest_hash):
         api_version_data = { "current_truth_version": latest_truth_version, "current_hash": latest_hash}
-        with open(api_version_json, 'wb') as api_version_data_file:
+        with open(api_version_json, 'w') as api_version_data_file:
             api_version_data_file.write(json.dumps(api_version_data, ensure_ascii=False, indent=4))
 
 
@@ -64,7 +61,7 @@ class MasterDBUpdater:
 
         latest_truth_version, latest_hash = self.get_latest_truth_version_and_hash()
             
-        if (latest_truth_version == current_truth_version and latest_hash == current_hash):
+        if (int(latest_truth_version) == current_truth_version):
             print("Current truth version matches the current latest truth version, no master database updates required.")
         else:
             print("New truth version and hash required (or there was no initial load), beginning new master db retrieval")

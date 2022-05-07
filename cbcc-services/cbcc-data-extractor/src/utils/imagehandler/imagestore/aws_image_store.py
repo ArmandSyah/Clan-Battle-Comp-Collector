@@ -1,14 +1,12 @@
 import botocore
-from dependency_injector.wiring import Provide
 
-from src.containers import Container
 from src.utils.imagehandler.imagestore.base_image_store import BaseImageStore
 
 class AwsImageStore(BaseImageStore):
-    def __init__(self) -> None:        
-        self.s3_resource = Provide[Container.s3_resource]
-        self.s3_bucket = Provide[Container.config.aws.s3_bucket]
-        self.s3_region = Provide[Container.config.aws.s3_region_name]
+    def __init__(self, s3_resource, s3_bucket, s3_region_name) -> None:        
+        self.s3_resource = s3_resource
+        self.s3_bucket = s3_bucket
+        self.s3_region = s3_region_name
     
     def retrieve(self, image_name) -> str:
         try:

@@ -149,4 +149,5 @@ pipeline_results/
 temp_assets/
 manifest/
 config.ini
+cbcc-services/cbcc-data-extractor/version/
 # End of https://www.toptal.com/developers/gitignore/api/python

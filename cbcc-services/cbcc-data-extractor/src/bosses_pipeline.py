@@ -1,22 +1,18 @@
 import json
 import os
 
-from dependency_injector.wiring import Provide
-
-from src.containers import Container
-
 from src.models.unit_id_container import UnitIdContainer
 
 class BossesPipeline:
-    def __init__(self) -> None:
-        self.master_db_reader = Provide[Container.master_db_reader]
-        self.translator = Provide[Container.translation_service]
-        self.image_extraction_service = Provide[Container.image_extraction_service]
-        self.image_handler = Provide[Container.image_handler]
+    def __init__(self, master_db_reader, translator, image_extraction_service, image_handler, config) -> None:
+        self.master_db_reader = master_db_reader
+        self.translator = translator
+        self.image_extraction_service = image_extraction_service
+        self.image_handler = image_handler
         
         ## Configs
-        self.pipeline_results_directory = Provide[Container.config.directories.pipeline_results_directory]
-        self.boss_json = Provide[Container.config.pipeline_results.boss]
+        self.pipeline_results_directory = config["directories"]["pipeline_results_directory"]
+        self.boss_json = config["pipeline_results"]["boss"]
         
         self.cached_en_names = dict()
         self.cached_en_desription_translations = dict()
