@@ -147,4 +147,6 @@ cython_debug/
 database/
 pipeline_results/
 temp_assets/
+manifest/
+config.ini
 # End of https://www.toptal.com/developers/gitignore/api/python

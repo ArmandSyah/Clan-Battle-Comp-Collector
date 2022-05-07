@@ -8,26 +8,28 @@ import unitypack
 from PIL import ImageOps
 
 import struct 
+from dependency_injector.wiring import Provide
 
+from src.containers import Container
 from src.models.unit_id_container import UnitIdContainer
-from src.utils.config_reader import ConfigReader
 
 class ImageExtractionService:
-    def __init__(self, config_reader: ConfigReader) -> None:
-        self.config_reader = config_reader
-        
+    def __init__(self) -> None: 
         ## Read Config values
-        self.current_truth_version = self.config_reader.read("database", "current_truth_version")
-        self.priconne_cdn_host = self.config_reader.read("priconne_cdn_host")
-        self.manifest_directory = self.config_reader.read("manifest_directory")
-        self.temp_assets_directory = self.config_reader.read("image_extraction", "temp_assets_directory")
-        self.unity_assets_directory = self.config_reader.read("image_extraction", "unity_assets_directory")
-        self.deserialized_assets_directory = self.config_reader.read("image_extraction", "deserialized_assets_directory")
+        self.priconne_cdn_host = Provide[Container.config.endpoints.priconne_cdn_host]
+        self.manifest_directory = Provide[Container.config.directories.manifest_directory]
+        self.manifest_file = Provide[Container.config.pcrddatabase.manifest_file]
+        self.temp_assets_directory = Provide[Container.config.directories.temp_assets_directory]
+        self.unity_assets_directory = Provide[Container.config.directories.unity_assets_directory]
+        self.deserialized_assets_directory = Provide[Container.config.directories.deserialized_assets_directory]
        
         ## Directory paths
         self.current_dir = os.getcwd()
-        self.current_unit_manifest_file = os.path.join(self.current_dir, self.manifest_directory, f'unit_manifest_{self.current_truth_version}.txt')
+        self.current_unit_manifest_file = os.path.join(self.current_dir, self.manifest_directory, self.manifest_file)
         
+        if not os.path.exists(os.path.join(self.current_dir, self.temp_assets_directory)):
+            os.makedirs(os.path.join(self.current_dir, self.temp_assets_directory))
+
         if not os.path.exists(self.current_unit_manifest_file):
             raise FileNotFoundError("The current manifest file could not be found, make sure it's built first")
         

@@ -2,27 +2,26 @@ import json
 from multiprocessing.dummy import active_children
 import os
 
-from pykakasi.kakasi import Kakasi
+from dependency_injector.wiring import Provide
 
+from src.containers import Container
 from src.models.unit_id_container import UnitIdContainer
-from src.utils.master_db_reader import MasterDBReader
-from src.utils.config_reader import ConfigReader
-from src.utils.translation_service import TranslationService
-from src.utils.image_extraction_service import ImageExtractionService
-from src.utils.imagehandler.image_handler import ImageHandler
 
 class PlayableUnitsPipeline:
-    def __init__(self, config_reader: ConfigReader, master_db_reader: MasterDBReader, kakasi: Kakasi, translator: TranslationService, image_extraction_service: ImageExtractionService, image_handler: ImageHandler) -> None:
-        self.config_reader = config_reader
-        self.master_db_reader = master_db_reader
-        self.kakasi = kakasi
-        self.translator = translator
-        self.image_extraction_service = image_extraction_service
-        self.image_handler = image_handler
+    def __init__(self) -> None:
+        self.master_db_reader = Provide[Container.master_db_reader]
+        self.kakasi = Provide[Container.kakasi]
+        self.translator = Provide[Container.translation_service]
+        self.image_extraction_service = Provide[Container.image_extraction_service]
+        self.image_handler = Provide[Container.image_handler]
         
         ## Configs
-        self.pipeline_results_directory = config_reader.read('pipeline_results_directory')
-        self.character_json = config_reader.read("json_pipelines", "character")
+        current_dir = os.getcwd()
+        self.pipeline_results_directory = Provide[Container.config.directories.pipeline_results_directory]
+        self.character_json = Provide[Container.config.pipeline_results.character]
+
+        if not os.path.exists(os.path.join(current_dir, self.pipeline_results_directory)):
+            os.makedirs(os.path.join(current_dir, self.pipeline_results_directory))
         
         self.current_thematics = dict()
         self.retrieved_unit_ids = set()

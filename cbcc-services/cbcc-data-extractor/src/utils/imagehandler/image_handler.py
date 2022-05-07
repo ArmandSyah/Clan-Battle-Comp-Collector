@@ -1,17 +1,16 @@
 import os
 from typing import Tuple
+from dependency_injector.wiring import Provide
 
-from src.utils.config_reader import ConfigReader
-from src.utils.imagehandler.imagestore.base_image_store import BaseImageStore
+from src.containers import Container
 
 class ImageHandler():
-    def __init__(self, config_reader: ConfigReader, image_store: BaseImageStore) -> None:
-        self.config_reader = config_reader
-        self.image_store = image_store
+    def __init__(self) -> None:
+        self.image_store = Provide[Container.aws_image_store]
         
         # Read Config Values
-        self.temp_assets_directory = self.config_reader.read("image_extraction", "temp_assets_directory")
-        self.deserialized_assets_directory = self.config_reader.read("image_extraction", "deserialized_assets_directory")
+        self.temp_assets_directory = Provide[Container.config.directories.temp_assets_directory]
+        self.deserialized_assets_directory = Provide[Container.config.directories.deserialized_assets_directory]
         
         ## Directory paths
         self.current_dir = os.getcwd()

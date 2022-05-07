@@ -1,87 +1,81 @@
+import json
+from typing import Tuple
 import requests
 from requests.exceptions import Timeout
 import os
 import subprocess
+from dependency_injector.wiring import Provide
 
-from src.utils.config_reader import ConfigReader
+from src.containers import Container
 
 class MasterDBUpdater:
-    def __init__(self, config_reader: ConfigReader) -> None:
-        self.config_reader = config_reader
-        
-        ## Read Config values
-        self.current_truth_version = self.config_reader.read("database", "current_truth_version")
-        self.current_hash = self.config_reader.read("database", "current_hash")
-        self.latest_version_endpoint = self.config_reader.read("latest_version_endpoint")
-        self.database_directory = self.config_reader.read("database", "master_db_directory")
-        self.priconne_cdn_host = self.config_reader.read("priconne_cdn_host")
-        self.max_test_amount = self.config_reader.read("database", "max_test_amount")
-        self.test_multiplier = self.config_reader.read("database", "test_multiplier")
+    def __init__(self) -> None:
+        self.latest_version_endpoint = Provide[Container.config.endpoints.latest_version_endpoint]
+        self.api_version_directory = Provide[Container.config.directories.api_version_directory]
+        self.api_version = Provide[Container.directories.pcrddatabase.api_version_info]
+        self.database_directory = Provide[Container.config.directories.master_db_directory]
+        self.master_db = Provide[Container.directories.pcrddatabase.master_db]
+        self.priconne_cdn_host = Provide[Container.config.endpoints.priconne_cdn_host]
         
         ## Directory paths
         self.current_dir = os.getcwd()
         self.database_dir_path = os.path.join(self.current_dir, self.database_directory)
-        
+        self.api_version_info = os.path.join(self.current_dir, self.api_version_directory)
+
         if not os.path.exists(self.database_dir_path):
             os.makedirs(self.database_dir_path)
-        
-    def check_and_update_master_db(self):
-        initial_load = not os.path.exists(os.path.join(self.database_dir_path, f'master_{self.current_hash}.db'))
-        
-        latest_truth_version, latest_hash = self.get_latest_truth_version_and_hash()
-            
-        if (not initial_load and latest_truth_version == self.current_truth_version):
-            print("Current truth version matches the current latest truth version, no master database updates required.")
-        else:
-            print("New truth version and hash required (or there was no initial load), beginning new master db retrieval")
-            self.retrieve_and_decrypt_cdn_master_db(latest_hash)
-            
-            self.config_reader.write(latest_truth_version, "database", "current_truth_version")
-            self.config_reader.write(latest_hash, "database", "current_hash")
-            
-            print('Updated config with latest truth version and hash')
-            
+
+        if not os.path.exists(self.api_version_info):
+            os.makedirs(self.api_version_info)
+
+
+    def get_current_api_version(self, api_version_json) -> Tuple[int, str]:
+         with open(api_version_json, 'rb') as api_version_data:
+            api_version_data = json.load(api_version_data)
+            return int(api_version_data["current_truth_version"]), str(api_version_data["current_hash"])
+
+
+    def write_current_api_version(self, api_version_json, latest_truth_version, latest_hash):
+        api_version_data = { "current_truth_version": latest_truth_version, "current_hash": latest_hash}
+        with open(api_version_json, 'wb') as api_version_data_file:
+            api_version_data_file.write(json.dumps(api_version_data, ensure_ascii=False, indent=4))
+
 
     def get_latest_truth_version_and_hash(self):
         try:
             print("Attempting to hit estertion endpoint")
             latest_version_response = requests.get(self.latest_version_endpoint, timeout=10)
         except Timeout:
-            print('Estertion request timed out, beginning the guess and check method')
-            latest_truth_version, latest_hash = self.guess_and_check()
-        else:
-            print("Estertion request successful")
-            latest_version_response_json = latest_version_response.json()
-            latest_truth_version, latest_hash = latest_version_response_json["TruthVersion"], latest_version_response_json["hash"]
+            print('Estertion request timed out')
+            raise
+        
+        print("Estertion request successful")
+        latest_version_response_json = latest_version_response.json()
+        latest_truth_version, latest_hash = latest_version_response_json["TruthVersion"], latest_version_response_json["hash"]
             
         return latest_truth_version, latest_hash
 
-    def guess_and_check(self):
-        latest_truth_version, latest_hash = self.current_truth_version, self.current_hash
-        
-        i = 0
-        while i < self.max_test_amount:
-            truth_version_guess = int(self.current_truth_version) + (i * int(self.test_multiplier))
+
+    def check_and_update_master_db(self):
+        current_truth_version, current_hash = 0, ""
+        api_version_json = os.path.join(self.api_version_info, self.api_version)
+        if os.path.exists(api_version_json):
+            current_truth_version, current_hash = self.get_current_api_version(api_version_json)
+
+        latest_truth_version, latest_hash = self.get_latest_truth_version_and_hash()
             
-            asset_manifest_endpoint = f'{self.priconne_cdn_host}/dl/resources/{truth_version_guess}/Jpn/AssetBundles/Windows/manifest/masterdata_assetmanifest'
-            masterdata_assetmanifest_response = requests.get(asset_manifest_endpoint)
-            
-            if (masterdata_assetmanifest_response.ok):
-                print('Found new truth version, updating the new truth')
-                response_text = masterdata_assetmanifest_response.text
-                
-                latest_truth_version = truth_version_guess
-                latest_hash = response_text.split(',')[1]
-                
-                break
-            
-            i += 1
-        
-        return latest_truth_version, latest_hash
+        if (latest_truth_version == current_truth_version and latest_hash == current_hash):
+            print("Current truth version matches the current latest truth version, no master database updates required.")
+        else:
+            print("New truth version and hash required (or there was no initial load), beginning new master db retrieval")
+            self.retrieve_and_decrypt_cdn_master_db(latest_hash)
+            print('Updated config with latest truth version and hash')
+            self.write_current_api_version(api_version_json, latest_truth_version, latest_hash)
+
 
     def retrieve_and_decrypt_cdn_master_db(self, latest_hash):
         cdb_path = os.path.join(self.database_dir_path, 'master.cdb')
-        db_path = os.path.join(self.database_dir_path, f'master_{latest_hash}.db')
+        db_path = os.path.join(self.database_dir_path, self.master_db)
         
         db_endpoint = f'{self.priconne_cdn_host}/dl/pool/AssetBundles/{latest_hash[0:2]}/{latest_hash}'
         encrypted_db_response = requests.get(db_endpoint)

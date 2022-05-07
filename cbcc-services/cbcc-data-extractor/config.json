@@ -14,8 +14,8 @@
         "deserialized_assets_directory": "deserialized_assets"
     },
     "database": {
-        "current_hash": "ee5abd6d6821fc317a6c8709f08edff1",
-        "current_truth_version": "10035400",
+        "current_hash": "10a89117159974a035ba07f281154050",
+        "current_truth_version": "10038100",
         "master_db_directory": "database",
         "max_test_amount": 10,
         "test_multiplier": 10

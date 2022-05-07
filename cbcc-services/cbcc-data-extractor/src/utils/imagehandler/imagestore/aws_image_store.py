@@ -1,22 +1,14 @@
-import boto3
 import botocore
+from dependency_injector.wiring import Provide
 
-from src.utils.env_reader import EnvReader
+from src.containers import Container
 from src.utils.imagehandler.imagestore.base_image_store import BaseImageStore
 
 class AwsImageStore(BaseImageStore):
-    def __init__(self, env_reader: EnvReader) -> None:
-        self.env_reader = env_reader
-        
-        # env variables
-        self.s3_key = self.env_reader.read('AWS_ACCESS_KEY_ID')
-        self.s3_secret = self.env_reader.read('AWS_SECRET_ACCESS_KEY')
-        self.s3_bucket = self.env_reader.read('S3_BUCKET')
-        self.s3_region = self.env_reader.read('S3_REGION_NAME')
-        
-        self.s3_resource = boto3.resource('s3', 
-                                          aws_access_key_id=self.s3_key, 
-                                          aws_secret_access_key=self.s3_secret)
+    def __init__(self) -> None:        
+        self.s3_resource = Provide[Container.s3_resource]
+        self.s3_bucket = Provide[Container.config.aws.s3_bucket]
+        self.s3_region = Provide[Container.config.aws.s3_region_name]
     
     def retrieve(self, image_name) -> str:
         try:
