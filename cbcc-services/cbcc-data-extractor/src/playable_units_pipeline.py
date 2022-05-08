@@ -39,8 +39,8 @@ class PlayableUnitsPipeline:
         with open(character_json_path, 'rb') as character_json_file:
             try:
                 self.character_data = json.load(character_json_file)
-                self.retrieved_unit_ids = set(character['unit_id'] for character in self.character_data)
-                thematics_from_data = set((character['jp_thematic'], character['en_thematic']) for character in self.character_data) 
+                self.retrieved_unit_ids = set(unit_id for unit_id in self.character_data.keys())
+                thematics_from_data = set((character['jp_thematic'], character['en_thematic']) for character in self.character_data.values()) 
                 self.current_thematics = {jp_thematic:en_thematic for (jp_thematic, en_thematic) in thematics_from_data}    
             except (json.JSONDecodeError):
                 self.logger.debug(f'Something went wrong with loading {self.character_json}, retrieving fresh character data')
@@ -90,12 +90,12 @@ class PlayableUnitsPipeline:
             ### Checking for existance of icons in the image store first
             icon = self.image_handler.check_image_exists(icon_path, icon_id)
 
-            self.character_data['icon'] = icon
-            self.character_data['max_star'] = 6
-            self.character_data['update_action'] = 'update'
+            self.character_data[unit_id]['icon'] = icon
+            self.character_data[unit_id]['max_star'] = 6
+            self.character_data[unit_id]['update_action'] = 'update'
         else:
             self.logger.debug(f"No update required for {unit_id}")
-            self.character_data['update_action'] = 'no_op'
+            self.character_data[unit_id]['update_action'] = 'no_op'
 
 
     def add_character(self, character_result):
