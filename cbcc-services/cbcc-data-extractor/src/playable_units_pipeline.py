@@ -1,10 +1,12 @@
 import json
-from multiprocessing.dummy import active_children
+import logging
 import os
 from src.models.unit_id_container import UnitIdContainer
 
 class PlayableUnitsPipeline:
     def __init__(self, master_db_reader, kakasi, translator, image_extraction_service, image_handler, config) -> None:
+        self.logger = logging.getLogger('dataExtractorLogger')
+
         self.master_db_reader = master_db_reader
         self.kakasi = kakasi
         self.translator = translator
@@ -28,7 +30,7 @@ class PlayableUnitsPipeline:
         character_json_path = os.path.join(os.getcwd(),self.pipeline_results_directory, self.character_json)
         
         if not os.path.exists(character_json_path):
-            print('Character.json doesn\'t exist, retrieving fresh character data')
+            self.logger.debug('Character.json doesn\'t exist, retrieving fresh character data')
             self.current_thematics = dict()
             self.retrieved_unit_ids = set()
             self.character_data = []
@@ -39,7 +41,7 @@ class PlayableUnitsPipeline:
                 self.character_data = json.load(character_json_file)
                 self.retrieved_unit_ids = set(character['unit_id'] for character in self.character_data)    
             except (json.JSONDecodeError):
-                print(f'Something went wrong with loading {self.character_json}, retrieving fresh character data')
+                self.logger.debug(f'Something went wrong with loading {self.character_json}, retrieving fresh character data')
                 self.current_thematics = dict()
                 self.retrieved_unit_ids = set()
                 self.character_data = []
@@ -61,10 +63,10 @@ class PlayableUnitsPipeline:
             unit_id = character['unit_id']
             
             if unit_id in self.retrieved_unit_ids:
-                print(f'Character with unit id {unit_id} has already been processed')
+                self.logger.debug(f'Character with unit id {unit_id} has already been processed')
                 continue
             
-            print(f"Processing character {unit_id}: {character['unit_name']}")
+            self.logger.info(f"Processing character {unit_id}: {character['unit_name']}")
             # thematics
             jp_thematic = self.check_unit_thematic(character["unit_name"])
             

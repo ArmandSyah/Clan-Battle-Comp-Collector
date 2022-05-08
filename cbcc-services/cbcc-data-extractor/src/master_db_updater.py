@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Tuple
 import requests
 from requests.exceptions import Timeout
@@ -7,6 +8,9 @@ import subprocess
 
 class MasterDBUpdater:
     def __init__(self, config) -> None:
+        self.logger = logging.getLogger('dataExtractorLogger')
+
+        # Configs
         self.latest_version_endpoint = config["endpoints"]["latest_version_endpoint"]
         self.api_version_directory = config["directories"]["api_version_directory"]
         self.api_version = config["pcrddatabase"]["api_version_info"]
@@ -40,13 +44,13 @@ class MasterDBUpdater:
 
     def get_latest_truth_version_and_hash(self):
         try:
-            print("Attempting to hit estertion endpoint")
+            self.logger.info("Attempting to hit estertion endpoint")
             latest_version_response = requests.get(self.latest_version_endpoint, timeout=10)
         except Timeout:
-            print('Estertion request timed out')
+            self.logger.error('Estertion request timed out')
             raise
         
-        print("Estertion request successful")
+        self.logger.info("Estertion request successful")
         latest_version_response_json = latest_version_response.json()
         latest_truth_version, latest_hash = latest_version_response_json["TruthVersion"], latest_version_response_json["hash"]
             
@@ -62,12 +66,12 @@ class MasterDBUpdater:
         latest_truth_version, latest_hash = self.get_latest_truth_version_and_hash()
             
         if (int(latest_truth_version) == current_truth_version):
-            print("Current truth version matches the current latest truth version, no master database updates required.")
+            self.logger.info(f"Current truth version {current_truth_version} matches the latest truth version {latest_truth_version}, no master database updates required.")
         else:
-            print("New truth version and hash required (or there was no initial load), beginning new master db retrieval")
+            self.logger.info("New truth version and hash found, beginning new master db retrieval")
             self.retrieve_and_decrypt_cdn_master_db(latest_hash)
-            print('Updated config with latest truth version and hash')
             self.write_current_api_version(api_version_json, latest_truth_version, latest_hash)
+            self.logger.debug('Updated config with latest truth version and hash')
 
 
     def retrieve_and_decrypt_cdn_master_db(self, latest_hash):
@@ -75,6 +79,9 @@ class MasterDBUpdater:
         db_path = os.path.join(self.database_dir_path, self.master_db)
         
         db_endpoint = f'{self.priconne_cdn_host}/dl/pool/AssetBundles/{latest_hash[0:2]}/{latest_hash}'
+
+        self.logger.debug(f'Retrieving encrypted database from {db_endpoint}')
+
         encrypted_db_response = requests.get(db_endpoint)
         
         with open(cdb_path, 'wb') as cdb_file:
@@ -83,7 +90,7 @@ class MasterDBUpdater:
         coneshell_exe = os.path.join(self.current_dir, 'Coneshell_call.exe')
         coneshell_call = f"{coneshell_exe} -cdb {cdb_path} {db_path}"
         subprocess.run(coneshell_call, shell=True)
-        print("new database has been retrieved")
+        self.logger.debug("new database has been retrieved")
         
         os.remove(cdb_path)
-        print("Removed cdb file")
+        self.logger.debug("Removed cdb file")

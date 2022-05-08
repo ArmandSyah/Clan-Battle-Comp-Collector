@@ -1,9 +1,12 @@
 import json
+import logging
 import os
 import requests
 
 class ManifestUpdater:
     def __init__(self, config) -> None:
+        self.logger = logging.getLogger('dataExtractorLogger')
+
         ## Read Config values
         self.api_version_directory = config["directories"]["api_version_directory"]
         self.api_version_info = config["pcrddatabase"]["api_version_info"]
@@ -28,7 +31,7 @@ class ManifestUpdater:
     def get_unit_manifest(self):
         current_unit_manifest_path = os.path.join(self.manifest_path, self.manifest_file)
         
-        print('Retrieving latest unit manifest')
+        self.logger.info('Retrieving latest unit manifest')
         
         unit_manifest_endpoint = f'{self.priconne_cdn_host}/dl/Resources/{self.current_truth_version}/Jpn/AssetBundles/Windows/manifest/unit2_assetmanifest'
         unit_manifest_response = requests.get(unit_manifest_endpoint)
@@ -36,4 +39,4 @@ class ManifestUpdater:
         with open(current_unit_manifest_path, 'w') as unit_manifest_file:
             unit_manifest_file.write(unit_manifest_response.text)
             
-        print('Retrieved latest unit manifest')
+        self.logger.info('Retrieved latest unit manifest')

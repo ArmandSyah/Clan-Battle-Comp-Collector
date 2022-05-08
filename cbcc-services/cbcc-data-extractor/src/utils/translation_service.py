@@ -1,3 +1,5 @@
+import logging
+
 from deep_translator import (GoogleTranslator,
                              MicrosoftTranslator,
                              MyMemoryTranslator,
@@ -6,6 +8,8 @@ from deep_translator import (GoogleTranslator,
 
 class TranslationService:
     def __init__(self, config) -> None:
+        self.logger = logging.getLogger('dataExtractorLogger')
+
         # Translation api keys
         self.deepl_api_key = config["translationapikeys"]["deepl_api_key"]
         self.yandex_api_key = config["translationapikeys"]["yandex_api_key"]
@@ -37,12 +41,12 @@ class TranslationService:
     def translate(self, text_to_translate) -> str:     
         for translation_api_call in self.translation_apis.values():
             try:
-                print('starting translation')
+                self.logger.debug('starting translation')
                 translated_text = translation_api_call(text_to_translate)
-                print(f'translation successful: {translated_text}')
+                self.logger.debug(f'translation successful: {translated_text}')
                 return translated_text
             except:
-                print('translation failed, moving onto the next one')
+                self.logger.debug('translation failed, moving onto the next one')
             
         return ''
     

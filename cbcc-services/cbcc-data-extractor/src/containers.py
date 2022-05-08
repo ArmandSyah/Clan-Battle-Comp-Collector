@@ -1,4 +1,5 @@
 import imp
+import logging.config
 import boto3
 from dependency_injector import containers, providers
 import pykakasi
@@ -9,7 +10,12 @@ from src.utils.imagehandler import image_handler
 from src.utils.imagehandler.imagestore import aws_image_store 
 
 class Container(containers.DeclarativeContainer):
-    config = providers.Configuration()
+    config = providers.Configuration(ini_files=["config.ini"])
+
+    logging = providers.Resource(
+        logging.config.fileConfig,
+        fname="logging.ini"
+    )
 
     s3_resource = providers.Singleton(
         boto3.resource,

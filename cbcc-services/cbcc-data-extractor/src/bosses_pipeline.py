@@ -1,10 +1,13 @@
 import json
+import logging
 import os
 
 from src.models.unit_id_container import UnitIdContainer
 
 class BossesPipeline:
     def __init__(self, master_db_reader, translator, image_extraction_service, image_handler, config) -> None:
+        self.logger = logging.getLogger('dataExtractorLogger')
+
         self.master_db_reader = master_db_reader
         self.translator = translator
         self.image_extraction_service = image_extraction_service
@@ -59,6 +62,7 @@ class BossesPipeline:
             for _, boss_info in boss_data_results.iterrows():
                 unit_id = boss_info['unit_id']
                 
+                self.logger.info(f"Processing boss {unit_id}: {boss_info['unit_name']}")
                 # Name Handling
                 jp_name = boss_info['unit_name']
                 if jp_name in self.cached_en_names:

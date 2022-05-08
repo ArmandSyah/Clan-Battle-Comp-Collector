@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 import pandas as pd
 import os
@@ -5,6 +6,8 @@ import unicodedata
 
 class MasterDBReader:
     def __init__(self, master_db_directory, master_db) -> None:
+        self.logger = logging.getLogger('dataExtractorLogger')
+
         self.master_db_path = os.path.join(os.getcwd(), master_db_directory, master_db)
         self.master_db_connection = None
 
@@ -15,23 +18,23 @@ class MasterDBReader:
     
     def start_connection(self):        
         self.master_db_connection = sqlite3.connect(self.master_db_path)
-        print("Connection to master db has begun")
+        self.logger.info("Connection to master db has begun")
         
     def close_connection(self):
         if self.is_connected():
             self.master_db_connection.close()
-            print("Connection to master db has closed")
+            self.logger.info("Connection to master db has closed")
         else:
-            print("DB error occured while trying to close, it might not even be turned on")
+            self.logger.warn("DB error occured while trying to close, it might not even be turned on")
             
         
     def is_connected(self):
         try:
             self.master_db_connection.cursor()
-            print("Currently connected to master db")
+            self.logger.info("Currently connected to master db")
             return True
         except sqlite3.Error:
-            print("Currently not connected to master db")
+            self.logger.info("Currently not connected to master db")
             return False
         
     def query_master_db(self, sql_query) -> pd.DataFrame:

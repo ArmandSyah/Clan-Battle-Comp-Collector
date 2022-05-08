@@ -144,6 +144,7 @@ cython_debug/
 
 .vscode
 
+logs/
 database/
 pipeline_results/
 temp_assets/

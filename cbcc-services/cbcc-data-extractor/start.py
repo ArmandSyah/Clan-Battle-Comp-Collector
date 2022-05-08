@@ -1,8 +1,11 @@
+import logging
+import os
+
 from src.containers import Container
 
 def setup():
     container = Container()
-    container.config.from_ini("./config.ini")
+    container.init_resources()
     
     # Retrieve a new version of the priconne master database if it exists
     master_db_updater = container.master_db_updater_service()
@@ -20,4 +23,7 @@ def setup():
     container.master_db_reader_util().close_connection()
         
 if __name__ == "__main__":   
+    if not os.path.exists(os.path.join(os.getcwd(), 'logs')):
+        os.mkdir(os.path.join(os.getcwd(), 'logs'))
+    
     setup()

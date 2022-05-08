@@ -1,3 +1,4 @@
+import logging
 import os
 import pathlib
 import requests
@@ -12,7 +13,9 @@ import struct
 from src.models.unit_id_container import UnitIdContainer
 
 class ImageExtractionService:
-    def __init__(self, config) -> None: 
+    def __init__(self, config) -> None:
+        self.logger = logging.getLogger('dataExtractorLogger')
+
         ## Read Config values
         self.priconne_cdn_host = config["endpoints"]["priconne_cdn_host"]
         self.manifest_directory = config["directories"]["manifest_directory"]
@@ -38,7 +41,7 @@ class ImageExtractionService:
         
     def make_unit_icons(self, unit_name, unit_id_container: UnitIdContainer, playable_character=False, thematic='') -> str:
         if self.check_icons_already_exist(unit_name, thematic):
-            print("Icons have already been made")
+            self.logger.warn("Icons have already been made")
             return self.set_full_unit_name(unit_name, thematic)
         
         if (playable_character):
@@ -72,7 +75,7 @@ class ImageExtractionService:
             unit_icon_unity_file_in_manifest = f'a/unit_icon_unit_{icon_id}.unity3d'
             
             if unit_icon_unity_file_in_manifest in self.unit_asset_file_to_hash_map:
-                print(f"Retrieving unity file with id: {icon_id}")
+                self.logger.info(f"Retrieving unity file with id: {icon_id}")
                 hash = self.unit_asset_file_to_hash_map[unit_icon_unity_file_in_manifest]
                 
                 icon_endpoint = f'{self.priconne_cdn_host}/dl/pool/AssetBundles/{hash[0:2]}/{hash}'
@@ -81,7 +84,7 @@ class ImageExtractionService:
                 with open(unit_icon_unity_file_path, 'wb') as unity_file:
                     unity_file.write(encrypted_icon_response.content) 
             else:
-                print(f'File not found, moving on')
+                self.logger.warn(f'File not found, moving on')
     
     
     def deserialize_unity_asset_into_png(self, unit_name, thematic=''):
@@ -121,10 +124,10 @@ class ImageExtractionService:
                         
                         with open(png_export_path, 'wb') as png_file:
                             png_file.write(output.getvalue())
-                            print(f"Completed Deserialization for {png_export_path}")
+                            self.logger.info(f"Completed Deserialization for {png_export_path}")
                             return
         except struct.error:
-            print('Hit a struct error related to the unity pack library while deserializing')
+            self.logger.warn('Hit a struct error related to the unity pack library while deserializing')
             return 
         
     def set_full_unit_name(self, unit_name, thematic=''):
