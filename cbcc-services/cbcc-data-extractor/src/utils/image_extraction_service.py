@@ -8,9 +8,7 @@ from io import BytesIO
 import unitypack
 from PIL import ImageOps
 
-import struct 
-
-from src.models.unit_id_container import UnitIdContainer
+import struct
 
 class ImageExtractionService:
     def __init__(self, config) -> None:
@@ -38,59 +36,54 @@ class ImageExtractionService:
             manifest_lines = unit_manifest.read().splitlines()
         
         self.unit_asset_file_to_hash_map = {x.split(',')[0]:x.split(',')[1] for x in manifest_lines}
+
+    # Returns the directory of where the icon has been deserialized to for further use
+    def make_unit_icon(self, unit_name, icon_id, thematic='') -> str:
+        icon_dir = self.set_full_unit_name(unit_name, thematic)
+
+        self.logger.info(f'Checking icons for {icon_dir}')
+
+        if self.check_icon_already_exist(icon_dir, icon_id):
+            self.logger.warn("Icon have already been made")
+            return icon_dir
         
-    def make_unit_icons(self, unit_name, unit_id_container: UnitIdContainer, playable_character=False, thematic='') -> str:
-        if self.check_icons_already_exist(unit_name, thematic):
-            self.logger.warn("Icons have already been made")
-            return self.set_full_unit_name(unit_name, thematic)
+        self.retrieve_unity_asset_for_character(icon_dir, icon_id)
+        self.deserialize_unity_asset_into_png(icon_dir)
         
-        if (playable_character):
-            self.retrieve_unity_asset_for_character(unit_name, 
-                                                    thematic, 
-                                                    unit_id_container.one_star_icon_id, 
-                                                    unit_id_container.three_star_icon_id, 
-                                                    unit_id_container.six_star_icon_id)
-            self.deserialize_unity_asset_into_png(unit_name, thematic) 
-        else:
-            self.retrieve_unity_asset_for_character(unit_name, thematic, unit_id_container.unit_id)
-            self.deserialize_unity_asset_into_png(unit_name, thematic)
-        
-        return self.set_full_unit_name(unit_name, thematic)
+        return icon_dir
     
-    def check_icons_already_exist(self, unit_name, thematic='') -> bool:
-        full_unit_name = self.set_full_unit_name(unit_name, thematic)
-        unit_converted_pngs_directory = os.path.join(self.current_dir, self.temp_assets_directory, full_unit_name, self.deserialized_assets_directory)
+    def check_icon_already_exist(self, icon_dir, icon_id) -> bool:
+        icon_png = f'{icon_dir}_{icon_id}.png'
+        unit_converted_pngs_directory = os.path.join(self.current_dir, self.temp_assets_directory, icon_dir, self.deserialized_assets_directory, icon_png)
         
-        return os.path.exists(unit_converted_pngs_directory) and len(os.listdir(unit_converted_pngs_directory)) > 0
+        return os.path.exists(unit_converted_pngs_directory)
     
-    def retrieve_unity_asset_for_character(self, unit_name, thematic='', *icon_ids):
-        full_unit_name = self.set_full_unit_name(unit_name, thematic)
-        unit_temp_assets_directory = os.path.join(self.current_dir, self.temp_assets_directory, full_unit_name, self.unity_assets_directory)
+    def retrieve_unity_asset_for_character(self, icon_dir, icon_id):
+        unit_temp_assets_directory = os.path.join(self.current_dir, self.temp_assets_directory, icon_dir, self.unity_assets_directory)
         
         if not os.path.exists(unit_temp_assets_directory):
             os.makedirs(unit_temp_assets_directory)
         
-        for icon_id in icon_ids:
-            unit_icon_unity_file_path = os.path.join(unit_temp_assets_directory, f'{full_unit_name}_{icon_id}.unity3d')
-            unit_icon_unity_file_in_manifest = f'a/unit_icon_unit_{icon_id}.unity3d'
+        unit_icon_unity_file_path = os.path.join(unit_temp_assets_directory, f'{icon_dir}_{icon_id}.unity3d')
+        unit_icon_unity_file_in_manifest = f'a/unit_icon_unit_{icon_id}.unity3d'
+        
+        if unit_icon_unity_file_in_manifest in self.unit_asset_file_to_hash_map:
+            self.logger.info(f"Retrieving unity file with id: {icon_id}")
+            hash = self.unit_asset_file_to_hash_map[unit_icon_unity_file_in_manifest]
             
-            if unit_icon_unity_file_in_manifest in self.unit_asset_file_to_hash_map:
-                self.logger.info(f"Retrieving unity file with id: {icon_id}")
-                hash = self.unit_asset_file_to_hash_map[unit_icon_unity_file_in_manifest]
-                
-                icon_endpoint = f'{self.priconne_cdn_host}/dl/pool/AssetBundles/{hash[0:2]}/{hash}'
-                encrypted_icon_response = requests.get(icon_endpoint)
-                
-                with open(unit_icon_unity_file_path, 'wb') as unity_file:
-                    unity_file.write(encrypted_icon_response.content) 
-            else:
-                self.logger.warn(f'File not found, moving on')
+            icon_endpoint = f'{self.priconne_cdn_host}/dl/pool/AssetBundles/{hash[0:2]}/{hash}'
+            self.logger.debug(f'Retrieving the encrypted icon from {icon_endpoint}')
+            encrypted_icon_response = requests.get(icon_endpoint)
+            
+            with open(unit_icon_unity_file_path, 'wb') as unity_file:
+                unity_file.write(encrypted_icon_response.content) 
+        else:
+            self.logger.warn(f'File {unit_icon_unity_file_in_manifest} not found')
     
     
-    def deserialize_unity_asset_into_png(self, unit_name, thematic=''):
-        full_unit_name = self.set_full_unit_name(unit_name, thematic)
-        unit_temp_assets_directory = os.path.join(self.current_dir, self.temp_assets_directory, full_unit_name, self.unity_assets_directory)
-        unit_converted_pngs_directory = os.path.join(self.current_dir, self.temp_assets_directory, full_unit_name, self.deserialized_assets_directory)
+    def deserialize_unity_asset_into_png(self, icon_dir):
+        unit_temp_assets_directory = os.path.join(self.current_dir, self.temp_assets_directory, icon_dir, self.unity_assets_directory)
+        unit_converted_pngs_directory = os.path.join(self.current_dir, self.temp_assets_directory, icon_dir, self.deserialized_assets_directory)
         
         if not os.path.exists(unit_converted_pngs_directory):
             os.makedirs(unit_converted_pngs_directory)

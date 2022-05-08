@@ -18,7 +18,7 @@ def setup():
     playable_units_pipeline.build_character_json()
     
     bosses_pipeline = container.bosses_pipeline_service()
-    bosses_pipeline.build_bosses_json()
+    bosses_pipeline.build_clan_battle_json()
     
     container.master_db_reader_util().close_connection()
         
