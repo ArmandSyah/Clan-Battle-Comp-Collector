@@ -20,8 +20,8 @@ class Container(containers.DeclarativeContainer):
     s3_resource = providers.Singleton(
         boto3.resource,
         's3',
-        aws_access_key_id=config.aws.aws_access_key_id,
-        aws_secret_access_key=config.aws.aws_secret_access_key
+        aws_access_key_id=config.aws_access_key_id,
+        aws_secret_access_key=config.aws_secret_access_key
     )
 
     kakasi = providers.Singleton(pykakasi.kakasi)

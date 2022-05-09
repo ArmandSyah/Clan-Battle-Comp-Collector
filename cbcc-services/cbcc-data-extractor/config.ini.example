@@ -35,7 +35,5 @@ yandex_api_key=
 microsoft_api_key=
 
 [aws]
-aws_access_key_id=
-aws_secret_access_key=
 s3_bucket=
 s3_region_name=

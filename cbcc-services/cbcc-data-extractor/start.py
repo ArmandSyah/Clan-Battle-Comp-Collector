@@ -1,10 +1,14 @@
-import logging
 import os
 
 from src.containers import Container
 
 def setup():
     container = Container()
+    container.config.aws_access_key_id.from_env("AWS_ACCESS_KEY_ID")
+    container.config.aws_secret_access_key.from_env("AWS_SECRET_ACCESS_KEY")
+    container.config.deepl_api_key.from_env("DEEPL_API_KEY")
+    container.config.yandex_api_key.from_env("YANDEX_API_KEY")
+    container.config.microsoft_api_key.from_env("MICROSOFT_API_KEY")
     container.init_resources()
     
     # Retrieve a new version of the priconne master database if it exists

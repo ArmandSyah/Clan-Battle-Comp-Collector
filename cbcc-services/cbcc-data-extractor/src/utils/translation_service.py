@@ -11,9 +11,9 @@ class TranslationService:
         self.logger = logging.getLogger('dataExtractorLogger')
 
         # Translation api keys
-        self.deepl_api_key = config["translationapikeys"]["deepl_api_key"]
-        self.yandex_api_key = config["translationapikeys"]["yandex_api_key"]
-        self.microsoft_api_key = config["translationapikeys"]["microsoft_api_key"]
+        self.deepl_api_key = config["deepl_api_key"]
+        self.yandex_api_key = config["yandex_api_key"]
+        self.microsoft_api_key = config["microsoft_api_key"]
         
         self.translation_apis = dict()
 
