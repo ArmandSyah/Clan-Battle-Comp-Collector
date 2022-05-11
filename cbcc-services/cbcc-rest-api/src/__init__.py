@@ -15,6 +15,9 @@ def create_app(script_info=None):
     app.config.from_object(app_settings)
 
     db.init_app(app)
+
+    from src.resources import api
+    api.init_app(app)
     
     @app.shell_context_processor
     def ctx():
