@@ -11,7 +11,7 @@ class Character(db.Model):
     thematic = db.Column(db.String(80))
     thematic_en = db.Column(db.String(80))
     range = db.Column(db.Integer, nullable=False)
-    icon = db.Column(db.String(80), unique=True, nullable=False)
+    icon = db.Column(db.String(200), unique=True, nullable=False)
     max_star = db.Column(db.Integer, nullable=False)
 
     team_comp_characters = db.relationship('TeamCompCharacter', backref="character", cascade="all, delete-orphan")

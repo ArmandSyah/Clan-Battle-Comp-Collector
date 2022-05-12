@@ -1,10 +1,9 @@
-import imp
 import logging.config
 import boto3
 from dependency_injector import containers, providers
 import pykakasi
 
-from src import manifest_updater, master_db_updater, playable_units_pipeline, bosses_pipeline
+from src import pipeline_staging, manifest_updater, master_db_updater, playable_units_pipeline, bosses_pipeline, pipeline_exporter
 from src.utils import master_db_reader, translation_service, image_extraction_service
 from src.utils.imagehandler import image_handler 
 from src.utils.imagehandler.imagestore import aws_image_store 
@@ -59,6 +58,11 @@ class Container(containers.DeclarativeContainer):
 
     # Pipeline services
 
+    pipeline_staging_service = providers.Singleton(
+        pipeline_staging.PipelineStaging,
+        config
+    )
+
     master_db_updater_service = providers.Singleton(
         master_db_updater.MasterDBUpdater,
         config
@@ -85,5 +89,10 @@ class Container(containers.DeclarativeContainer):
         translation_service_util,
         image_extraction_service_util,
         image_handler_util,
+        config
+    )
+
+    pipeline_exporter_service = providers.Singleton(
+        pipeline_exporter.PipelineExporter,
         config
     )

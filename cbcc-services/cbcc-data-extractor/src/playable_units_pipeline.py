@@ -103,6 +103,10 @@ class PlayableUnitsPipeline:
 
         self.logger.info(f"Processing new character {unit_id}: {character_result['unit_name']}")
         
+        range = character_result['search_area_width']
+        if range == '0':
+            return
+
         # thematics
         jp_thematic = self.check_unit_thematic(character_result["unit_name"])
         if not jp_thematic in self.current_thematics:
@@ -130,7 +134,7 @@ class PlayableUnitsPipeline:
             'unit_name_en': romanized_name,
             'jp_thematic': jp_thematic,
             'en_thematic': en_thematic,
-            'range': character_result['search_area_width'],
+            'range': range,
             'character_icon': icon,
             'update_action': 'new', # other values include '' or 'update'
             'max_star': 6 if is_six_star else 5
