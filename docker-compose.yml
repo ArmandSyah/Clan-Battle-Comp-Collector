@@ -1,16 +1,31 @@
 version: '3.8'
 
 services:
-
-  muimi:
-    build:
-      context: ./cbcc-services/cbcc-data-extractor
+  tsumugi:
+    build: 
+      context: ./cbcc-services/cbcc-rest-api
       dockerfile: Dockerfile
+    entrypoint: ['/usr/src/app/entrypoint.sh']
     volumes:
-      - './cbcc-services/cbcc-data-extractor:/usr/src/data-extractor'
+      - ./cbcc-services/cbcc-rest-api:/usr/src/app
+    ports:
+      - 5004:5000
     environment:
-      - DEEPL_API_KEY=${DEEPL_API_KEY}
-      - YANDEX_API_KEY=${YANDEX_API_KEY}
-      - MICROSOFT_API_KEY=${MICROSOFT_API_KEY}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - FLASK_APP=src/__init__.py
+      - FLASK_ENV=development
+      - APP_SETTINGS=src.config.DevelopmentConfig
+      - DATABASE_URL=postgresql://postgres:postgres@pecorine:5432/api_dev
+      - DATABASE_TEST_URL=postgresql://postgres:postgres@pecorine:5432/api_test
+    depends_on:
+      - pecorine
+
+  
+  pecorine:
+    build:
+      context: ./cbcc-services/cbcc-db
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    expose:
+      - 5432

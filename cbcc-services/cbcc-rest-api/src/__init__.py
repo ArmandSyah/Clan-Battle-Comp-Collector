@@ -1,10 +1,14 @@
 import os
 from flask import Flask
+from flask_cors import CORS
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 # extensions
+cors = CORS()
 db = SQLAlchemy()
+migrate = Migrate()
 
 def create_app(script_info=None):
 
@@ -15,6 +19,8 @@ def create_app(script_info=None):
     app.config.from_object(app_settings)
 
     db.init_app(app)
+    cors.init_app(app, resources={r"*": {"origins": "*"}})
+    migrate.init_app(app, db)
 
     from src.resources import api
     api.init_app(app)

@@ -14,4 +14,4 @@ class Character(db.Model):
     icon = db.Column(db.String(80), unique=True, nullable=False)
     max_star = db.Column(db.Integer, nullable=False)
 
-    team_comp_characters = db.Relationship('TeamCompCharacter', backref="character")
+    team_comp_characters = db.relationship('TeamCompCharacter', backref="character", cascade="all, delete-orphan")

@@ -12,4 +12,4 @@ class Boss(db.Model):
     icon = db.Column(db.String(80), unique=True, nullable=False)
     clan_battle_id = db.Column(db.Integer, db.ForeignKey('clan_battle.clan_battle_id'))
 
-    team_comps = db.relationship('TeamComp', backref="boss")
+    team_comps = db.relationship('TeamComp', backref="boss", cascade="all, delete-orphan")

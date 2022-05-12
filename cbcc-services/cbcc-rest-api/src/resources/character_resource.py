@@ -67,7 +67,7 @@ class CharacterList(Resource):
         response_object["message"] = f'Character {unit_name_en} was addded!'
         return response_object, 201
 
-class Character(Resource):
+class SingleCharacter(Resource):
     @characters_namespace.expect(character, validate=True)
     @characters_namespace.response(200, "Character <character_id> was updated!")
     @characters_namespace.response(404, "Character with ID <character_id> does not exist")
@@ -91,4 +91,4 @@ class Character(Resource):
         return response_object, 200
 
 characters_namespace.add_resource(CharacterList, "")
-characters_namespace.add_resource(Character, "/<int:unit_id>")
+characters_namespace.add_resource(SingleCharacter, "/<int:unit_id>")

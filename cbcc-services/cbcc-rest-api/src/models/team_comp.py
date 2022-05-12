@@ -12,7 +12,7 @@ class TeamComp(db.Model):
     playstyle = db.Column(db.String(80), nullable=False)
     boss_id = db.Column(db.Integer, db.ForeignKey('boss.unit_id'))
 
-    team_comp_characters = db.Relationship('TeamCompCharacter', backref="team_comp")
+    team_comp_characters = db.relationship('TeamCompCharacter', backref="team_comp", cascade="all, delete-orphan")
 
 
 class TeamCompCharacter(db.Model):
