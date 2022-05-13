@@ -1,10 +1,61 @@
 from src import db
 from flask import request
 from flask_restx import Namespace, Resource, fields
+from sqlalchemy.orm import joinedload 
 
 from ..models.clan_battle import ClanBattle
 
 clan_battle_namespace = Namespace("cb")
+
+character = clan_battle_namespace.model(
+    "Character",
+    {
+        "unit_name_en": fields.String(required=True),
+        "thematic_en": fields.String,
+        "range": fields.Integer,
+        "icon": fields.String(required=True)
+    }
+)
+
+team_comp_character = clan_battle_namespace.model(
+    "TeamComp_Character",
+    {
+        "id": fields.Integer(readOnly=True),
+        "star": fields.Integer(required=True),
+        "rank": fields.Integer(required=True),
+        "ue": fields.Integer,
+        "notes": fields.String,
+        "team_comp_id": fields.Integer,
+        "character_id": fields.Integer,
+        "character": fields.Nested(character)
+    }
+)
+
+team_comps = clan_battle_namespace.model(
+    "TeamComp",
+    {
+        "id": fields.Integer(readOnly=True),
+        "video_url": fields.String,
+        "expected_damage": fields.Integer(required=True),
+        "notes": fields.String,
+        "phase": fields.Integer(required=True),
+        "playstyle": fields.String,
+        "boss_id": fields.Integer,
+        "team_comp_characters": fields.List(fields.Nested(team_comp_character))
+    }
+)
+
+bosses = clan_battle_namespace.model(
+    "Boss",
+    {
+        "id": fields.Integer(readOnly=True),
+        "unit_id": fields.Integer(required=True),
+        "unit_name": fields.String(required=True),
+        "unit_name_en": fields.String(required=True),
+        "icon": fields.String(required=True),
+        "team_comps": fields.List(fields.Nested(team_comps))
+    }
+)
 
 clan_battle = clan_battle_namespace.model(
     "ClanBattle",
@@ -13,7 +64,8 @@ clan_battle = clan_battle_namespace.model(
         "training_start_date": fields.DateTime(required=True),
         "training_end_date": fields.DateTime(required=True),
         "main_start_date": fields.DateTime(required=True),
-        "main_end_date": fields.DateTime(required=True)
+        "main_end_date": fields.DateTime(required=True),
+        "bosses": fields.List(fields.Nested(bosses))
     }
 )
 
@@ -58,7 +110,9 @@ class ClanBattleList(Resource):
 class LatestClanBattle(Resource):
     @clan_battle_namespace.marshal_with(clan_battle)
     def get(self):
-        pass
+        clan_battle = ClanBattle.query.options(joinedload(ClanBattle.bosses)).order_by(ClanBattle.main_start_date).first()
+
+        return clan_battle, 200
 
 clan_battle_namespace.add_resource(ClanBattleList, "")
 clan_battle_namespace.add_resource(LatestClanBattle, "/latest")
