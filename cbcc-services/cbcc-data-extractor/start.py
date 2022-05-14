@@ -20,21 +20,21 @@ def run_pipeline(staging_action):
 
     container.init_resources()
 
-    # pipeline_staging = container.pipeline_staging_service()
-    # pipeline_staging.stage()
+    pipeline_staging = container.pipeline_staging_service()
+    pipeline_staging.stage()
     
-    # # Retrieve a new version of the priconne master database if it exists
-    # master_db_updater = container.master_db_updater_service()
-    # master_db_updater.check_and_update_master_db()
+    # Retrieve a new version of the priconne master database if it exists
+    master_db_updater = container.master_db_updater_service()
+    master_db_updater.check_and_update_master_db()
     
-    # manifest_updater = container.manifest_updater_service()
-    # manifest_updater.get_unit_manifest()
+    manifest_updater = container.manifest_updater_service()
+    manifest_updater.get_unit_manifest()
     
-    # playable_units_pipeline = container.playable_units_pipeline_service()
-    # playable_units_pipeline.build_character_json()
+    playable_units_pipeline = container.playable_units_pipeline_service()
+    playable_units_pipeline.build_character_json()
     
-    # bosses_pipeline = container.bosses_pipeline_service()
-    # bosses_pipeline.build_clan_battle_json()
+    bosses_pipeline = container.bosses_pipeline_service()
+    bosses_pipeline.build_clan_battle_json()
     
     container.master_db_reader_util().close_connection()
 
