@@ -27,6 +27,7 @@ team_comp_character = team_comp_namespace.model(
         "star": fields.Integer(required=True),
         "rank": fields.Integer(required=True),
         "ue": fields.Integer,
+        "level": fields.Integer,
         "notes": fields.String,
         "team_comp_id": fields.Integer,
         "character_id": fields.Integer,

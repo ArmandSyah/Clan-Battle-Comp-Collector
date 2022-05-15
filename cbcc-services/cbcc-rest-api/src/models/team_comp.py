@@ -23,6 +23,7 @@ class TeamCompCharacter(db.Model):
     star = db.Column(db.Integer, nullable=False)
     rank = db.Column(db.Integer, nullable=False)
     ue = db.Column(db.Integer, nullable=False)
+    level = db.Column(db.Integer)
     notes = db.Column(db.Text)
     team_comp_id = db.Column(db.Integer, db.ForeignKey('team_comp.id'))
     character_id = db.Column(db.Integer, db.ForeignKey('character.unit_id'))

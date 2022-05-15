@@ -42,7 +42,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - './cbcc-services/cbcc-ui:/usr/src/app'
-      - './usr/src/app/node_modules'
+      - '/usr/src/app/node_modules'
     ports:
     - 3007:3000
     environment:
