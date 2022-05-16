@@ -1,0 +1,418 @@
+{
+    "team_comps": [
+        {
+            "video_url": "https://www.youtube.com/watch?v=PO59duNda7E",
+            "expected_damage": 36500000,
+            "notes": "",
+            "phase": 5,
+            "playstyle": "manual",
+            "boss_id": 1,
+            "team_comp_characters": [
+                {
+                    "star": 5,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 121001
+                },
+                {
+                    "star": 3,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 114401
+                },
+                {
+                    "star": 6,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 105701
+                },
+                {
+                    "star": 6,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 107601
+                },
+                {
+                    "star": 3,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 118501
+                }
+
+            ]
+        },
+        {
+            "video_url": "https://www.youtube.com/watch?v=PO59duNda7E",
+            "expected_damage": 36500000,
+            "notes": "",
+            "phase": 5,
+            "playstyle": "manual",
+            "boss_id": 1,
+            "team_comp_characters": [
+                {
+                    "star": 5,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 121001
+                },
+                {
+                    "star": 3,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 114401
+                },
+                {
+                    "star": 6,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 105701
+                },
+                {
+                    "star": 6,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 107601
+                },
+                {
+                    "star": 3,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 118501
+                }
+
+            ]
+        },
+        {
+            "video_url": "https://www.youtube.com/watch?v=PO59duNda7E",
+            "expected_damage": 36500000,
+            "notes": "",
+            "phase": 5,
+            "playstyle": "manual",
+            "boss_id": 1,
+            "team_comp_characters": [
+                {
+                    "star": 5,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 121001
+                },
+                {
+                    "star": 3,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 114401
+                },
+                {
+                    "star": 6,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 105701
+                },
+                {
+                    "star": 6,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 107601
+                },
+                {
+                    "star": 3,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 118501
+                }
+
+            ]
+        },
+        {
+            "video_url": "https://www.youtube.com/watch?v=PO59duNda7E",
+            "expected_damage": 36500000,
+            "notes": "",
+            "phase": 5,
+            "playstyle": "manual",
+            "boss_id": 2,
+            "team_comp_characters": [
+                {
+                    "star": 5,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 121001
+                },
+                {
+                    "star": 3,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 114401
+                },
+                {
+                    "star": 6,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 105701
+                },
+                {
+                    "star": 6,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 107601
+                },
+                {
+                    "star": 3,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 118501
+                }
+
+            ]
+        },
+        {
+            "video_url": "https://www.youtube.com/watch?v=PO59duNda7E",
+            "expected_damage": 36500000,
+            "notes": "",
+            "phase": 5,
+            "playstyle": "manual",
+            "boss_id": 2,
+            "team_comp_characters": [
+                {
+                    "star": 5,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 121001
+                },
+                {
+                    "star": 3,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 114401
+                },
+                {
+                    "star": 6,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 105701
+                },
+                {
+                    "star": 6,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 107601
+                },
+                {
+                    "star": 3,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 118501
+                }
+
+            ]
+        },
+        {
+            "video_url": "https://www.youtube.com/watch?v=PO59duNda7E",
+            "expected_damage": 36500000,
+            "notes": "",
+            "phase": 5,
+            "playstyle": "manual",
+            "boss_id": 3,
+            "team_comp_characters": [
+                {
+                    "star": 5,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 121001
+                },
+                {
+                    "star": 3,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 114401
+                },
+                {
+                    "star": 6,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 105701
+                },
+                {
+                    "star": 6,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 107601
+                },
+                {
+                    "star": 3,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 118501
+                }
+
+            ]
+        },
+        {
+            "video_url": "https://www.youtube.com/watch?v=PO59duNda7E",
+            "expected_damage": 36500000,
+            "notes": "",
+            "phase": 5,
+            "playstyle": "manual",
+            "boss_id": 4,
+            "team_comp_characters": [
+                {
+                    "star": 5,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 121001
+                },
+                {
+                    "star": 3,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 114401
+                },
+                {
+                    "star": 6,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 105701
+                },
+                {
+                    "star": 6,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 107601
+                },
+                {
+                    "star": 3,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 118501
+                }
+
+            ]
+        },
+        {
+            "video_url": "https://www.youtube.com/watch?v=PO59duNda7E",
+            "expected_damage": 36500000,
+            "notes": "",
+            "phase": 5,
+            "playstyle": "manual",
+            "boss_id": 5,
+            "team_comp_characters": [
+                {
+                    "star": 5,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 121001
+                },
+                {
+                    "star": 3,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 114401
+                },
+                {
+                    "star": 6,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 105701
+                },
+                {
+                    "star": 6,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 107601
+                },
+                {
+                    "star": 3,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 118501
+                }
+
+            ]
+        },
+        {
+            "video_url": "https://www.youtube.com/watch?v=PO59duNda7E",
+            "expected_damage": 36500000,
+            "notes": "",
+            "phase": 5,
+            "playstyle": "manual",
+            "boss_id": 5,
+            "team_comp_characters": [
+                {
+                    "star": 5,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 121001
+                },
+                {
+                    "star": 3,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 114401
+                },
+                {
+                    "star": 6,
+                    "rank": 24,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 105701
+                },
+                {
+                    "star": 6,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 107601
+                },
+                {
+                    "star": 3,
+                    "rank": 23,
+                    "level": 232,
+                    "notes": "",
+                    "character_id": 118501
+                }
+
+            ]
+        }
+    ]
+}

@@ -8,17 +8,13 @@ import {
 
 import "./App.css";
 
-import { useGetLatestClanBattleQuery } from "./app/api/apiSlice";
-
+import NavBar from "./components/NavBar/NavBar";
 import ClanBattleRotation from "./pages/ClanBattleRotation";
 
 function App() {
-  console.log(useGetLatestClanBattleQuery());
-
-  console.log("test");
-
   return (
     <Router>
+      <NavBar />
       <div>
         <Routes>
           <Route path="/clanbattle" element={<ClanBattleRotation />} />
