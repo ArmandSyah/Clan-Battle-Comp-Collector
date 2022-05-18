@@ -89,9 +89,6 @@ export default function TeamCompEntry(props) {
   const { expected_damage, phase, playstyle, team_comp_characters } =
     props.teamComp;
 
-  console.log(props.teamComp);
-  console.log(expected_damage, phase, playstyle);
-
   const characterIcons = team_comp_characters.map(
     (team_comp_character) => team_comp_character.character
   );

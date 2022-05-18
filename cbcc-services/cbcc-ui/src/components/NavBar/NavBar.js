@@ -1,5 +1,6 @@
-import React, { useMemo } from "react";
-import { IoSettingsSharp } from "react-icons/io5";
+import React, { useEffect, useState } from "react";
+import { IoArrowBack, IoSettingsSharp } from "react-icons/io5";
+import { Link, useLocation } from "react-router-dom";
 
 import { useGetLatestClanBattleQuery } from "../../app/api/apiSlice";
 
@@ -18,12 +19,28 @@ export default function NavBar() {
     isSuccess,
   } = useGetLatestClanBattleQuery();
 
+  const location = useLocation();
+  const [showBackButton, setShowBackButton] = useState(true);
+
+  useEffect(() => {
+    var currentPath = location.pathname;
+    setShowBackButton(currentPath !== "/clanBattle");
+  }, [location]);
+
   let content;
   if (isLoading || isFetching) {
     content = <div>Loading clan battle data</div>;
   } else if (isSuccess) {
     content = (
       <>
+        {showBackButton && (
+          <Link to="/clanBattle">
+            <IoArrowBack
+              className="text-neutral-600 hover:text-neutral-700 self-center cursor-pointer"
+              size={36}
+            />
+          </Link>
+        )}
         <div className="text-2xl text-white font-bold self-center ml-auto flex flex-col text-center">
           <p>Clan Battle Period</p>
           <p>

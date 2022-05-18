@@ -68,6 +68,11 @@ class CharacterList(Resource):
         return response_object, 201
 
 class SingleCharacter(Resource):
+    @characters_namespace.marshal_with(character)
+    def get(self, unit_id):
+        character = Character.query.filter_by(unit_id=unit_id).first()
+        return character, 200
+
     @characters_namespace.expect(character, validate=True)
     @characters_namespace.response(200, "Character <character_id> was updated!")
     @characters_namespace.response(404, "Character with ID <character_id> does not exist")
