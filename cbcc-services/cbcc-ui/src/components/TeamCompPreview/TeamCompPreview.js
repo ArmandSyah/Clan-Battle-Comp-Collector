@@ -9,18 +9,35 @@ const checkDisabledButton = (characters) => {
   );
 };
 
+const initialCharacterState = {
+  characterId: 0,
+  icon: "",
+  star: 0,
+  rank: 0,
+  ue: 0,
+  level: 0,
+  range: 0,
+  notes: "",
+};
+
 export default function TeamCompPreview({
   characters,
   addCharacterHandle,
   deleteCharacterHandle,
+  editCharacterHandle,
 }) {
   const [characterModalIsOpen, setCharacterModalIsOpen] = useState(false);
+  const [characterModalInEditMode, setCharacterModalInEditMode] =
+    useState(false);
+  const [currentCharacter, setCurrentCharacter] = useState(
+    initialCharacterState
+  );
+  const [currentIndex, setCurrentIndex] = useState(-1);
 
   const usedCharacterIds = useMemo(() => {
     const usedCharacters = characters.filter(
       (character) => character.characterId !== 0
     );
-    console.log(usedCharacters);
     if (usedCharacters.length > 0) {
       return usedCharacters.map((character) => character.characterId);
     }
@@ -28,18 +45,46 @@ export default function TeamCompPreview({
   }, [characters]);
 
   const closeModal = () => {
+    console.log("closed modal");
+    setCharacterModalInEditMode(false);
+    setCurrentCharacter(initialCharacterState);
+    setCurrentIndex(-1);
     setCharacterModalIsOpen(false);
   };
 
-  const openModal = () => {
+  const openModal = (editMode, character, index) => () => {
+    setCharacterModalInEditMode(editMode);
+    if (editMode) {
+      setCurrentCharacter(character);
+      setCurrentIndex(index);
+    } else {
+      setCurrentCharacter(initialCharacterState);
+      setCurrentIndex(-1);
+    }
     setCharacterModalIsOpen(true);
   };
 
-  const characterPreviewElement = ({ icon, star, rank, level, ue }, index) => {
+  const openModalInEditMode = (editMode, character, index) => (event) => {
+    if (character?.characterId !== 0) {
+      openModal(editMode, character, index)(event);
+    }
+  };
+
+  const onDeleteButtonClicked = (index) => () => {
+    deleteCharacterHandle(index);
+  };
+
+  const characterPreviewElement = (character, index) => {
+    const { icon, star, rank, level, ue } = character;
     return (
-      <div className="flex flex-col">
+      <div key={`character-${index}`} className="flex flex-col">
         <div className="text-stone-100 text-lg">
-          <img alt="icon" src={icon ? icon : emptyIcon} className="min-w-0" />
+          <img
+            onClick={openModalInEditMode(true, character, index)}
+            alt="icon"
+            src={icon ? icon : emptyIcon}
+            className="min-w-0"
+          />
           <div>Star: {star ? star : "-"}</div>
           <div>Rank: {rank ? rank : "-"}</div>
           <div>Level: {level ? level : "-"}</div>
@@ -47,7 +92,7 @@ export default function TeamCompPreview({
           {icon && (
             <button
               type="button"
-              onClick={deleteCharacterHandle(index)}
+              onClick={onDeleteButtonClicked(index)}
               className="flex items-center justify-center p-2 bg-stone-100 hover:bg-stone-300 rounded-3xl shadow-xl border-2 border-indigo-400"
             >
               <MdDeleteOutline size={16} className="text-stone-900" />
@@ -63,13 +108,13 @@ export default function TeamCompPreview({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-4">
+      <div className="flex flex-row-reverse gap-4">
         {characters.map(characterPreviewElement)}
       </div>
       <button
         disabled={checkDisabledButton(characters)}
         type="button"
-        onClick={openModal}
+        onClick={openModal(false)}
         className="flex items-center justify-center h-12 bg-stone-100 hover:bg-stone-300 rounded-3xl shadow-xl border-2 border-indigo-400"
       >
         <MdAddCircleOutline size={24} />
@@ -82,6 +127,10 @@ export default function TeamCompPreview({
         closeModal={closeModal}
         addCharacterHandle={addCharacterHandle}
         usedCharacterIds={usedCharacterIds}
+        editCharacterHandle={editCharacterHandle}
+        editMode={characterModalInEditMode}
+        character={currentCharacter}
+        index={currentIndex}
       />
     </div>
   );

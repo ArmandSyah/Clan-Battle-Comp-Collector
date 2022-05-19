@@ -25,6 +25,7 @@ const playstyles = [
 const actionTypes = {
   ADDCHARACTER: "ADDCHARACTER",
   REMOVECHARACTER: "REMOVECHARACTER",
+  EDITCHARACTER: "EDITCHARACTER",
   FORMINPUT: "FORMINPUT",
 };
 
@@ -109,7 +110,7 @@ const reducer = (state, action) => {
     case actionTypes.ADDCHARACTER:
       const newCharacter = action.payload.value;
       const [firstCharacter, ...rest] = state.characters;
-      characters = [...rest, newCharacter].sort((a, b) => b.range - a.range);
+      characters = [...rest, newCharacter].sort((a, b) => a.range - b.range);
       return {
         ...state,
         characters,
@@ -120,9 +121,21 @@ const reducer = (state, action) => {
         (_, characterIndex) => index !== characterIndex
       );
       characters = [initialCharacter, ...filteredCharacter].sort(
-        (a, b) => b.range - a.range
+        (a, b) => a.range - b.range
       );
       return { ...state, characters };
+    case actionTypes.EDITCHARACTER:
+      characters = state.characters.map((character, index) => {
+        if (index === action.payload.index) {
+          return action.payload.character;
+        }
+        return character;
+      });
+      characters = characters.sort((a, b) => a.range - b.range);
+      return {
+        ...state,
+        characters,
+      };
     default:
       return state;
   }
@@ -154,10 +167,18 @@ export default function AddTeamComp() {
     });
   };
 
-  const deleteCharacter = (index) => () => {
+  const deleteCharacter = (index) => {
     dispatch({
       type: actionTypes.REMOVECHARACTER,
       payload: { index },
+    });
+  };
+
+  const editCharacter = (character, index) => {
+    console.log(character, index);
+    dispatch({
+      type: actionTypes.EDITCHARACTER,
+      payload: { index, character },
     });
   };
 
@@ -248,6 +269,7 @@ export default function AddTeamComp() {
           characters={state.characters}
           addCharacterHandle={addCharacter}
           deleteCharacterHandle={deleteCharacter}
+          editCharacterHandle={editCharacter}
         />
       </div>
       <div className="lg:col-span-2">

@@ -7,7 +7,6 @@ function classNames(...classes) {
 }
 
 const characterGrid = (characters, handleClick, selectedList) => {
-  console.log(selectedList);
   return (
     <div className="grid grid-cols-6 overflow-y-scroll max-h-32 gap-1">
       {characters.map((character) => {
@@ -16,6 +15,7 @@ const characterGrid = (characters, handleClick, selectedList) => {
 
         return (
           <img
+            key={`${character.unit_id}-${character.unit_name_en}`}
             src={character.icon}
             alt={character.unit_id}
             className={classNames(

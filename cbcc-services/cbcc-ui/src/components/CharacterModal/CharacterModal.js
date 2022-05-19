@@ -1,5 +1,5 @@
 import { Dialog } from "@headlessui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CharacterSelector from "../CharacterSelector/CharacterSelector";
 import Input from "../Input/Input";
 import emptyIcon from "../../image/default.png";
@@ -20,18 +20,24 @@ export default function CharacterModal({
   characterModalIsOpen,
   closeModal,
   usedCharacterIds,
+  editCharacterHandle,
+  editMode,
+  index,
+  character,
 }) {
-  const [characterModalState, setCharacterModalState] = useState(initialState);
+  const [characterModalState, setCharacterModalState] = useState(character);
+
+  useEffect(() => {
+    console.log(
+      "Use Effect has been fired due to a change in the character prop"
+    );
+    setCharacterModalState(character);
+  }, [character]);
 
   const handleInputChange = (key) => (event) => {
     setCharacterModalState((prevCharacterModalState) => {
       return { ...prevCharacterModalState, [key]: event.target.value };
     });
-  };
-
-  const handleNonSubmitClose = () => {
-    setCharacterModalState(initialState);
-    closeModal();
   };
 
   const handleCharacterClick = (character) => () => {
@@ -53,8 +59,6 @@ export default function CharacterModal({
         prevCharacterModalState.range === character.range
           ? prevCharacterModalState.range
           : character.range;
-      console.log(character);
-      console.log(characterId);
       return {
         ...prevCharacterModalState,
         characterId: characterId,
@@ -64,8 +68,17 @@ export default function CharacterModal({
     });
   };
 
+  const handleNonSubmitClose = () => {
+    setCharacterModalState(initialState);
+    closeModal();
+  };
+
   const handleSubmitCharacter = () => {
-    addCharacterHandle(characterModalState);
+    if (editMode) {
+      editCharacterHandle(characterModalState, index);
+    } else {
+      addCharacterHandle(characterModalState);
+    }
     setCharacterModalState(initialState);
     closeModal();
   };
@@ -109,7 +122,7 @@ export default function CharacterModal({
               as="h2"
               className="flex justify-between text-2xl font-bold leading-6 text-stone-100"
             >
-              <span>Add New Character</span>
+              <span>{editMode ? "Edit" : "Add New"} Character</span>
               <div>
                 <button
                   type="button"
@@ -176,7 +189,9 @@ export default function CharacterModal({
                 onClick={handleSubmitCharacter}
                 className="flex disabled:opacity-20 items-center justify-center h-12 bg-stone-100 hover:bg-stone-300 rounded-3xl shadow-xl border-2 border-indigo-400"
               >
-                <span className="font-semi-bold text-2xl">Add Character</span>
+                <span className="font-semi-bold text-2xl">
+                  {editMode ? "Edit" : "Add New"} Character
+                </span>
               </button>
             </div>
           </Dialog.Panel>

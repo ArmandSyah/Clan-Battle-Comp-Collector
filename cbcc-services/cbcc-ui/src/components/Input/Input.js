@@ -11,7 +11,7 @@ export default function Input({
   return (
     <div>
       <label
-        for={id}
+        htmlFor={id}
         className="form-label inline-block mb-2 text-stone-100 text-2xl font-semibold"
       >
         {label}
@@ -25,6 +25,7 @@ export default function Input({
         type={type}
         id={id}
         disabled={disabled}
+        onWheel={(e) => e.target.blur()}
       />
     </div>
   );
