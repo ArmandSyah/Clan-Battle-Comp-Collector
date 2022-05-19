@@ -69,7 +69,7 @@ const ExpectedDamageBadge = (damage) => {
 
 const TierPlaystyle = (tier, playstyle) => {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1">
       {TierBadge.get(tier)}
       {PlaystyleBadge.get(playstyle.toLowerCase())}
     </div>
@@ -94,7 +94,7 @@ export default function TeamCompEntry(props) {
   );
 
   return (
-    <div className="flex flex-col h-44 bg-stone-300 hover:bg-stone-400 rounded-3xl shadow-xl border-2 border-indigo-400 p-3">
+    <div className="flex flex-col bg-stone-300 hover:bg-stone-400 rounded-3xl shadow-xl border-2 border-indigo-400 p-3">
       <div className="flex gap-2">
         {ExpectedDamageBadge(expected_damage)}
         {TierPlaystyle(phase, playstyle)}
@@ -104,7 +104,7 @@ export default function TeamCompEntry(props) {
         {characterIcons.map((character) => (
           <img
             src={character.icon}
-            className="scale-75 p-0.5 bg-black border rounded"
+            className="scale-75 p-0.5 bg-black border rounded object-contain relative"
             alt={character.unit_name_en}
           />
         ))}

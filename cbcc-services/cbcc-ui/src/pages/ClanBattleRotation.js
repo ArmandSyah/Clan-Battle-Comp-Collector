@@ -41,7 +41,7 @@ export default function ClanBattleRotation() {
   return isLoading || isFetching ? (
     <div>Loading is happening</div>
   ) : (
-    <div className="grid grid-cols-1 2xl:grid-cols-5 gap-3 px-4 pt-6 flex-wrap">
+    <div className="grid grid-cols-1 3xl:grid-cols-5 gap-3 px-4 pt-6 flex-wrap">
       {bosses.map(ClanBattleRotationBossSection)}
     </div>
   );
