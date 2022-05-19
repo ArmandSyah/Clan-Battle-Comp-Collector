@@ -19,6 +19,7 @@ export default function CharacterModal({
   addCharacterHandle,
   characterModalIsOpen,
   closeModal,
+  usedCharacterIds,
 }) {
   const [characterModalState, setCharacterModalState] = useState(initialState);
 
@@ -34,11 +35,16 @@ export default function CharacterModal({
   };
 
   const handleCharacterClick = (character) => () => {
+    if (usedCharacterIds.includes(character.unit_id)) {
+      console.log(`Character ${character.unit_name_en} is already in the list`);
+      return;
+    }
+
     setCharacterModalState((prevCharacterModalState) => {
       const characterId =
-        prevCharacterModalState.unitId === character.unitId
-          ? prevCharacterModalState.unitId
-          : character.unitId;
+        prevCharacterModalState.characterId === character.unit_id
+          ? prevCharacterModalState.characterId
+          : character.unit_id;
       const characterIcon =
         prevCharacterModalState.icon === character.icon
           ? prevCharacterModalState.icon
@@ -47,6 +53,8 @@ export default function CharacterModal({
         prevCharacterModalState.range === character.range
           ? prevCharacterModalState.range
           : character.range;
+      console.log(character);
+      console.log(characterId);
       return {
         ...prevCharacterModalState,
         characterId: characterId,
@@ -62,29 +70,62 @@ export default function CharacterModal({
     closeModal();
   };
 
+  const isCharacterModalValid = () => {
+    const numberRegex = /^[0-9\b]+$/;
+
+    const characterSelected = characterModalState.characterId !== 0;
+    const starValid =
+      characterModalState.star !== "" &&
+      numberRegex.test(characterModalState.star);
+    const rankValid =
+      characterModalState.rank !== "" &&
+      numberRegex.test(characterModalState.rank);
+    const levelValid =
+      characterModalState.star !== "" &&
+      numberRegex.test(characterModalState.star);
+    const ueValid =
+      characterModalState.level !== "" &&
+      numberRegex.test(characterModalState.level);
+
+    return characterSelected && starValid && rankValid && levelValid && ueValid;
+  };
+
   return (
     <Dialog
       open={characterModalIsOpen}
       onClose={handleNonSubmitClose}
-      className="relative z-50"
+      className="absolute z-10 "
     >
       {/* The backdrop, rendered as a fixed sibling to the panel container */}
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
       {/* Full-screen scrollable container */}
-      <div className="fixed inset-0 flex items-center justify-center p-4 overflow-scroll">
+      <div className="fixed inset-0 flex items-center justify-center p-4">
         {/* Container to center the panel */}
-        <div className="flex min-h-full items-center justify-center">
+        <div className="flex h-auto w-auto items-center justify-center">
           {/* The actual dialog panel  */}
-          <Dialog.Panel className="mx-auto max-w-sm rounded bg-gradient-to-r from-slate-500 to-slate-800 p-12">
+          <Dialog.Panel className="max-h-96 w-full max-w-md rounded bg-gradient-to-r from-slate-500 to-slate-800 p-12 overflow-y-auto">
             <Dialog.Title
               as="h2"
-              className="text-3xl font-bold leading-6 text-stone-100"
+              className="flex justify-between text-2xl font-bold leading-6 text-stone-100"
             >
-              Add New Character
+              <span>Add New Character</span>
+              <div>
+                <button
+                  type="button"
+                  className="inline-flex justify-center px-2 py-1 text-sm font-medium text-gray-200 bg-gray-900 border border-transparent rounded hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                  onClick={closeModal}
+                >
+                  X
+                </button>
+              </div>
             </Dialog.Title>
+
             <div className="flex flex-col mt-4 gap-4">
-              <CharacterSelector handleClick={handleCharacterClick} />
+              <CharacterSelector
+                handleClick={handleCharacterClick}
+                selectedList={usedCharacterIds}
+              />
               <img
                 src={
                   characterModalState.icon
@@ -130,9 +171,10 @@ export default function CharacterModal({
                 disabled={characterModalState.characterId === 0}
               />
               <button
+                disabled={!isCharacterModalValid()}
                 type="button"
                 onClick={handleSubmitCharacter}
-                className="flex items-center justify-center h-12 bg-stone-100 hover:bg-stone-300 rounded-3xl shadow-xl border-2 border-indigo-400"
+                className="flex disabled:opacity-20 items-center justify-center h-12 bg-stone-100 hover:bg-stone-300 rounded-3xl shadow-xl border-2 border-indigo-400"
               >
                 <span className="font-semi-bold text-2xl">Add Character</span>
               </button>

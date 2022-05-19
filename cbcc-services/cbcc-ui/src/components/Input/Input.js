@@ -18,7 +18,7 @@ export default function Input({
       </label>
       <input
         className={`input-main ${
-          disabled ? "text-gray-700 bg-gray-100 bg-clip-padding" : ""
+          disabled ? "text-stone-100 bg-gray-700 bg-clip-padding" : ""
         }`}
         value={value}
         onChange={handleChange}

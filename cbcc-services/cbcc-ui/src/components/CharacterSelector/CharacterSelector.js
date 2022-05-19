@@ -6,17 +6,28 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const characterGrid = (characters, handleClick) => {
+const characterGrid = (characters, handleClick, selectedList) => {
+  console.log(selectedList);
   return (
     <div className="grid grid-cols-6 overflow-y-scroll max-h-32 gap-1">
-      {characters.map((character) => (
-        <img
-          src={character.icon}
-          alt={character.unit_id}
-          className="bg-black border rounded cursor-pointer hover:drop-shadow-xl"
-          onClick={handleClick(character)}
-        />
-      ))}
+      {characters.map((character) => {
+        const characterId = character.unit_id;
+        const isAlreadySelected = selectedList.includes(characterId);
+
+        return (
+          <img
+            src={character.icon}
+            alt={character.unit_id}
+            className={classNames(
+              "bg-black border rounded",
+              isAlreadySelected
+                ? "grayscale"
+                : "cursor-pointer hover:drop-shadow-xl"
+            )}
+            onClick={handleClick(character)}
+          />
+        );
+      })}
     </div>
   );
 };
@@ -112,7 +123,7 @@ export default function CharacterSelector({ handleClick, selectedList }) {
               "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400"
             )}
           >
-            {characterGrid(allCharacters, handleClick)}
+            {characterGrid(allCharacters, handleClick, selectedList)}
           </Tab.Panel>
           <Tab.Panel
             className={classNames(
@@ -120,7 +131,7 @@ export default function CharacterSelector({ handleClick, selectedList }) {
               "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400"
             )}
           >
-            {characterGrid(frontCharacters, handleClick)}
+            {characterGrid(frontCharacters, handleClick, selectedList)}
           </Tab.Panel>
           <Tab.Panel
             className={classNames(
@@ -128,7 +139,7 @@ export default function CharacterSelector({ handleClick, selectedList }) {
               "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400"
             )}
           >
-            {characterGrid(midCharacters, handleClick)}
+            {characterGrid(midCharacters, handleClick, selectedList)}
           </Tab.Panel>
           <Tab.Panel
             className={classNames(
@@ -136,7 +147,7 @@ export default function CharacterSelector({ handleClick, selectedList }) {
               "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400"
             )}
           >
-            {characterGrid(backCharacters, handleClick)}
+            {characterGrid(backCharacters, handleClick, selectedList)}
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

@@ -71,7 +71,7 @@ const TierPlaystyle = (tier, playstyle) => {
   return (
     <div className="flex flex-col gap-2">
       {TierBadge.get(tier)}
-      {PlaystyleBadge.get(playstyle)}
+      {PlaystyleBadge.get(playstyle.toLowerCase())}
     </div>
   );
 };

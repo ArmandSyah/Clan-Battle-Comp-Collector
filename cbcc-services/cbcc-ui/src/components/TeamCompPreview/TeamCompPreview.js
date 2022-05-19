@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import emptyIcon from "../../image/default.png";
-import { MdAddCircleOutline } from "react-icons/md";
+import { MdAddCircleOutline, MdDeleteOutline } from "react-icons/md";
 import CharacterModal from "../CharacterModal/CharacterModal";
 
 const checkDisabledButton = (characters) => {
@@ -9,8 +9,23 @@ const checkDisabledButton = (characters) => {
   );
 };
 
-export default function TeamCompPreview({ characters, addCharacterHandle }) {
+export default function TeamCompPreview({
+  characters,
+  addCharacterHandle,
+  deleteCharacterHandle,
+}) {
   const [characterModalIsOpen, setCharacterModalIsOpen] = useState(false);
+
+  const usedCharacterIds = useMemo(() => {
+    const usedCharacters = characters.filter(
+      (character) => character.characterId !== 0
+    );
+    console.log(usedCharacters);
+    if (usedCharacters.length > 0) {
+      return usedCharacters.map((character) => character.characterId);
+    }
+    return [];
+  }, [characters]);
 
   const closeModal = () => {
     setCharacterModalIsOpen(false);
@@ -29,6 +44,18 @@ export default function TeamCompPreview({ characters, addCharacterHandle }) {
           <div>Rank: {rank ? rank : "-"}</div>
           <div>Level: {level ? level : "-"}</div>
           <div>UE: {ue ? ue : "-"}</div>
+          {icon && (
+            <button
+              type="button"
+              onClick={deleteCharacterHandle(index)}
+              className="flex items-center justify-center p-2 bg-stone-100 hover:bg-stone-300 rounded-3xl shadow-xl border-2 border-indigo-400"
+            >
+              <MdDeleteOutline size={16} className="text-stone-900" />
+              <span className="font-semi-bold text-stone-900 text-lg">
+                Delete
+              </span>
+            </button>
+          )}
         </div>
       </div>
     );
@@ -46,12 +73,15 @@ export default function TeamCompPreview({ characters, addCharacterHandle }) {
         className="flex items-center justify-center h-12 bg-stone-100 hover:bg-stone-300 rounded-3xl shadow-xl border-2 border-indigo-400"
       >
         <MdAddCircleOutline size={24} />
-        <span className="font-semi-bold text-2xl">Add Character</span>
+        <span className="font-semi-bold text-stone-900 text-2xl">
+          Add Character
+        </span>
       </button>
       <CharacterModal
         characterModalIsOpen={characterModalIsOpen}
         closeModal={closeModal}
         addCharacterHandle={addCharacterHandle}
+        usedCharacterIds={usedCharacterIds}
       />
     </div>
   );

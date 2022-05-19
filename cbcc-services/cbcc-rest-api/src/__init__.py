@@ -19,7 +19,7 @@ def create_app(script_info=None):
     app.config.from_object(app_settings)
 
     db.init_app(app)
-    cors.init_app(app, resources={r"*": {"origins": "*"}})
+    cors.init_app(app, resources={r"/*": {"origins": "*"}})
     migrate.init_app(app, db)
 
     from src.resources import api
