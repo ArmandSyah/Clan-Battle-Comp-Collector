@@ -2,8 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   missingCharacterIds: [],
-  sortBy: "",
-  showOnly: "All",
+  playstyle: "all",
 };
 
 const settingsSlice = createSlice({
@@ -11,27 +10,21 @@ const settingsSlice = createSlice({
   initialState,
   reducers: {
     addMissingCharacter: (state, action) => {
-      state.missingCharacterIds.push(action.payload);
+      state.missingCharacterIds.push(action.payload.characterId);
     },
     removeMissingCharacter: (state, action) => {
       state.missingCharacterIds = state.missingCharacterIds.filter(
-        (missingCharacterId) => missingCharacterId !== action.payload
+        (missingCharacterId) =>
+          missingCharacterId !== action.payload.characterId
       );
     },
-    changeSort: (state, action) => {
-      state.sortBy = action.payload;
-    },
-    changeShowOnly: (state, action) => {
-      state.showOnly = action.payload;
+    changePlaystyle: (state, action) => {
+      state.playstyle = action.payload.playstyle;
     },
   },
 });
 
-export const {
-  addMissingCharacter,
-  removeMissingCharacter,
-  changeSort,
-  changeShowOnly,
-} = settingsSlice.actions;
+export const { addMissingCharacter, removeMissingCharacter, changePlaystyle } =
+  settingsSlice.actions;
 
 export default settingsSlice.reducer;

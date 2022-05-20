@@ -3,6 +3,7 @@ import { IoArrowBack, IoSettingsSharp } from "react-icons/io5";
 import { Link, useLocation } from "react-router-dom";
 
 import { useGetLatestClanBattleQuery } from "../../app/api/apiSlice";
+import SettingsModal from "../SettingsModal/SettingsModal";
 
 const convertDate = (date) =>
   new Date(date).toLocaleDateString("en", {
@@ -17,6 +18,15 @@ export default function NavBar() {
   const location = useLocation();
   const [showBackButton, setShowBackButton] = useState(true);
   const [showSettings, setShowSettings] = useState(true);
+  const [settingsModalIsOpen, setSettingsModalIsOpen] = useState(false);
+
+  const closeModal = () => {
+    setSettingsModalIsOpen(false);
+  };
+
+  const openModal = () => {
+    setSettingsModalIsOpen(true);
+  };
 
   useEffect(() => {
     var currentPath = location.pathname;
@@ -45,10 +55,15 @@ export default function NavBar() {
         </div>
         {showSettings && (
           <IoSettingsSharp
+            onClick={openModal}
             className="text-neutral-600 hover:text-neutral-700 self-center ml-auto cursor-pointer"
             size={36}
           />
         )}
+        <SettingsModal
+          settingsModalIsOpen={settingsModalIsOpen}
+          closeModal={closeModal}
+        />
       </>
     );
   }

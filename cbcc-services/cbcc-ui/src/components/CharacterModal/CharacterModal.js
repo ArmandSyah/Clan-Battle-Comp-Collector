@@ -123,7 +123,7 @@ export default function CharacterModal({
               <div>
                 <button
                   type="button"
-                  className="inline-flex justify-center px-2 py-1 text-sm font-medium text-gray-200 bg-gray-900 border border-transparent rounded hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                  className="inline-flex justify-center px-2 py-1 text-sm font-medium text-gray-300 border border-transparent rounded hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
                   onClick={closeModal}
                 >
                   X
