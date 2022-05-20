@@ -29,6 +29,13 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["ClanBattle"],
     }),
+    deleteTeamComp: builder.mutation({
+      query: (teamCompId) => ({
+        url: `/teamcomp/${teamCompId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["ClanBattle"],
+    }),
     getLatestClanBattle: builder.query({
       query: () => "/clanbattle/latest",
       providesTags: ["ClanBattle"],
@@ -41,5 +48,6 @@ export const {
   useGetCharacterQuery,
   useGetTeamCompQuery,
   useAddTeamCompMutation,
+  useDeleteTeamCompMutation,
   useGetLatestClanBattleQuery,
 } = apiSlice;

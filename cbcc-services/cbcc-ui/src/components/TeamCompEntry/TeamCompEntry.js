@@ -1,26 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { ExpectedDamageBadge, TierPlaystyle } from "../Badges/Badges";
-import { MdEdit, MdDelete } from "react-icons/md";
+import { MdEdit, MdDelete, MdDescription } from "react-icons/md";
+import DeleteModal from "../DeleteModal/DeleteModal";
 
-const ActionButtons = () => {
-  return (
-    <div className="flex ml-auto">
-      <MdEdit size={36} className="text-indigo-400" />
-      <MdDelete size={36} className="text-indigo-400" />
-    </div>
-  );
-};
+export default function TeamCompEntry({ teamComp, bossName, icon }) {
+  const {
+    id: teamCompId,
+    expected_damage,
+    phase,
+    playstyle,
+    team_comp_characters,
+  } = teamComp;
+  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
 
-export default function TeamCompEntry(props) {
-  const { expected_damage, phase, playstyle, team_comp_characters } =
-    props.teamComp;
+  const closeModal = () => {
+    setDeleteModalIsOpen(false);
+  };
+
+  const openModal = (event) => {
+    setDeleteModalIsOpen(true);
+  };
 
   const characterIcons = team_comp_characters.map(
     (team_comp_character) => team_comp_character.character
   );
 
+  const ActionButtons = () => {
+    return (
+      <div className="flex flex-wrap ml-auto text-indigo-400">
+        <Link
+          to={{ pathname: `/viewTeamComp/${teamComp["id"]}` }}
+          state={{ bossName: bossName, icon: icon }}
+        >
+          <MdDescription size={36} />
+        </Link>
+        <MdEdit size={36} />
+        <MdDelete
+          size={36}
+          onClick={openModal}
+          className="hover:cursor-pointer"
+        />
+        {/* <button
+          onClick={openModal}
+          className="text-indigo-400 hover:border-red-500/50"
+        >
+        </button> */}
+      </div>
+    );
+  };
+
   return (
-    <div className="flex flex-col bg-stone-300 hover:bg-stone-400 rounded-3xl shadow-xl border-2 border-indigo-400 p-3">
+    <div className="flex flex-col bg-stone-300 rounded-3xl shadow-xl border-2 border-indigo-400 p-3">
       <div className="flex gap-2">
         {ExpectedDamageBadge(expected_damage)}
         {TierPlaystyle(phase, playstyle)}
@@ -35,6 +66,11 @@ export default function TeamCompEntry(props) {
           />
         ))}
       </div>
+      <DeleteModal
+        deleteModalIsOpen={deleteModalIsOpen}
+        closeModal={closeModal}
+        teamCompId={teamCompId}
+      />
     </div>
   );
 }

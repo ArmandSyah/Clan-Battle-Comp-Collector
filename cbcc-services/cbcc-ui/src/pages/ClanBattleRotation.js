@@ -21,12 +21,7 @@ export default function ClanBattleRotation() {
 
   const TeamCompEntries = (bossName, icon) => (teamComp) => {
     return (
-      <Link
-        to={{ pathname: `/viewTeamComp/${teamComp["id"]}` }}
-        state={{ bossName: bossName, icon: icon }}
-      >
-        <TeamCompEntry teamComp={teamComp} />
-      </Link>
+      <TeamCompEntry teamComp={teamComp} bossName={bossName} icon={icon} />
     );
   };
 

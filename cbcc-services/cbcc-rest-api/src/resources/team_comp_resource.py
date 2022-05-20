@@ -108,6 +108,21 @@ class SingleTeamComp(Resource):
         )
 
         return team_comp, 200
+    
+    @team_comp_namespace.response(200, "Team Comp <team_comp_id> was removed!")
+    @team_comp_namespace.response(404, "Team Comp <team_comp_id> does not exist")
+    def delete(self, team_comp_id):
+        response_object = {}
+        team_comp = TeamComp.query.filter(TeamComp.id == team_comp_id).first()
+
+        if not team_comp:
+            team_comp_namespace.abort(404, f"Team Comp {team_comp_id} does not exist")
+        
+        db.session.delete(team_comp)
+        db.session.commit()
+
+        response_object["message"] = f'Team Comp {team_comp_id} was removed!'
+        return response_object, 200
 
 
 class MultipleTeamComps(Resource):
