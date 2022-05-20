@@ -28,9 +28,6 @@ export default function CharacterModal({
   const [characterModalState, setCharacterModalState] = useState(character);
 
   useEffect(() => {
-    console.log(
-      "Use Effect has been fired due to a change in the character prop"
-    );
     setCharacterModalState(character);
   }, [character]);
 
@@ -107,7 +104,7 @@ export default function CharacterModal({
     <Dialog
       open={characterModalIsOpen}
       onClose={handleNonSubmitClose}
-      className="absolute z-10 "
+      className="absolute z-10"
     >
       {/* The backdrop, rendered as a fixed sibling to the panel container */}
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />

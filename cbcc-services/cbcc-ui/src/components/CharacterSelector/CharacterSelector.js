@@ -1,6 +1,7 @@
 import { Tab } from "@headlessui/react";
 import React, { useMemo } from "react";
 import { useGetCharactersQuery } from "../../app/api/apiSlice";
+import Loading from "../Gif/Loading";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -153,7 +154,7 @@ export default function CharacterSelector({ handleClick, selectedList }) {
       </Tab.Group>
     );
   } else {
-    content = <div>Loading</div>;
+    content = <Loading />;
   }
 
   return content;

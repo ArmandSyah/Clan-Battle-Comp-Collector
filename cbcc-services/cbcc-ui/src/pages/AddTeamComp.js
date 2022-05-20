@@ -7,6 +7,7 @@ import Input from "../components/Input/Input";
 import ListboxComponent from "../components/ListboxComponent/ListboxComponent";
 import TeamCompPreview from "../components/TeamCompPreview/TeamCompPreview";
 import { useAddTeamCompMutation } from "../app/api/apiSlice";
+import AddingTeamComp from "../components/Gif/AddingTeamComp";
 
 const phases = [
   { id: 1, label: "Tier 1", value: 1 },
@@ -210,6 +211,7 @@ export default function AddTeamComp() {
         const teamComp = {
           ...state,
           boss_id: bossId,
+          video_url: state.videoUrl,
           teamcomp_characters: characters,
           phase: state.phase.value,
           playstyle: state.playstyle.value,
@@ -223,7 +225,11 @@ export default function AddTeamComp() {
   };
 
   if (addingTeamComp) {
-    return <div>"Loading Adding Team Comp"</div>;
+    return (
+      <div className="absolute top-2/4 left-2/4">
+        <AddingTeamComp />
+      </div>
+    );
   } else if (teamCompAdded) {
     console.log("Team comp has been added");
     return navigate("/clanBattle");

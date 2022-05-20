@@ -36,16 +36,17 @@ export default function TeamCompPreview({
 
   const usedCharacterIds = useMemo(() => {
     const usedCharacters = characters.filter(
-      (character) => character.characterId !== 0
+      (character) =>
+        character.characterId !== 0 &&
+        character.characterId !== currentCharacter.characterId
     );
     if (usedCharacters.length > 0) {
       return usedCharacters.map((character) => character.characterId);
     }
     return [];
-  }, [characters]);
+  }, [characters, currentCharacter]);
 
   const closeModal = () => {
-    console.log("closed modal");
     setCharacterModalInEditMode(false);
     setCurrentCharacter(initialCharacterState);
     setCurrentIndex(-1);

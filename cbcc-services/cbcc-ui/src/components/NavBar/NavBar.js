@@ -12,25 +12,20 @@ const convertDate = (date) =>
   });
 
 export default function NavBar() {
-  const {
-    data: clanBattleInfo,
-    isLoading,
-    isFetching,
-    isSuccess,
-  } = useGetLatestClanBattleQuery();
+  const { data: clanBattleInfo, isSuccess } = useGetLatestClanBattleQuery();
 
   const location = useLocation();
   const [showBackButton, setShowBackButton] = useState(true);
+  const [showSettings, setShowSettings] = useState(true);
 
   useEffect(() => {
     var currentPath = location.pathname;
     setShowBackButton(currentPath !== "/clanBattle");
+    setShowSettings(currentPath === "/clanBattle");
   }, [location]);
 
   let content;
-  if (isLoading || isFetching) {
-    content = <div>Loading clan battle data</div>;
-  } else if (isSuccess) {
+  if (isSuccess) {
     content = (
       <>
         {showBackButton && (
@@ -41,17 +36,19 @@ export default function NavBar() {
             />
           </Link>
         )}
-        <div className="text-2xl text-white font-bold self-center ml-auto flex flex-col text-center">
+        <div className="text-2xl text-white font-bold self-center mx-auto flex flex-col text-center">
           <p>Clan Battle Period</p>
           <p>
             {convertDate(clanBattleInfo["main_start_date"])} -{" "}
             {convertDate(clanBattleInfo["main_end_date"])}
           </p>
         </div>
-        <IoSettingsSharp
-          className="text-neutral-600 hover:text-neutral-700 self-center ml-auto cursor-pointer"
-          size={36}
-        />
+        {showSettings && (
+          <IoSettingsSharp
+            className="text-neutral-600 hover:text-neutral-700 self-center ml-auto cursor-pointer"
+            size={36}
+          />
+        )}
       </>
     );
   }
