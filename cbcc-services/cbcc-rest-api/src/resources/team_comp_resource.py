@@ -78,6 +78,7 @@ class TeamComposition(Resource):
                 ue=character.get("ue"),
                 notes=character.get("notes"),
                 character_id=character.get("character_id"),
+                level=character.get("level")
             )
             used_characters.append(new_char)
 
