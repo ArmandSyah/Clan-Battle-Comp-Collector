@@ -1,15 +1,12 @@
 import MDEditor from "@uiw/react-md-editor";
 import { MdAddCircleOutline } from "react-icons/md";
 import React, { useReducer } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import BossHeader from "../components/BossHeader/BossHeader";
-import Input from "../components/Input/Input";
-import ListboxComponent from "../components/ListboxComponent/ListboxComponent";
-import TeamCompPreview from "../components/TeamCompPreview/TeamCompPreview";
-import { useAddTeamCompMutation } from "../app/api/apiSlice";
-import AddingTeamComp from "../components/Gif/AddingTeamComp";
+import BossHeader from "../../components/BossHeader/BossHeader";
+import Input from "../../components/Input/Input";
+import ListboxComponent from "../../components/ListboxComponent/ListboxComponent";
+import TeamCompPreview from "../../components/TeamCompPreview/TeamCompPreview";
 
-const phases = [
+export const phases = [
   { id: 1, label: "Tier 1", value: 1 },
   { id: 2, label: "Tier 2", value: 2 },
   { id: 3, label: "Tier 3", value: 3 },
@@ -17,7 +14,7 @@ const phases = [
   { id: 5, label: "Tier 5", value: 5 },
 ];
 
-const playstyles = [
+export const playstyles = [
   { id: 1, label: "Auto", value: "auto" },
   { id: 2, label: "Semi", value: "semi" },
   { id: 3, label: "Manual", value: "manual" },
@@ -38,6 +35,7 @@ const initialState = {
   notes: "",
   characters: [
     {
+      id: 0,
       characterId: 0,
       icon: "",
       star: 0,
@@ -48,6 +46,7 @@ const initialState = {
       notes: "",
     },
     {
+      id: 0,
       characterId: 0,
       icon: "",
       star: 0,
@@ -58,6 +57,7 @@ const initialState = {
       notes: "",
     },
     {
+      id: 0,
       characterId: 0,
       icon: "",
       star: 0,
@@ -68,6 +68,7 @@ const initialState = {
       notes: "",
     },
     {
+      id: 0,
       characterId: 0,
       icon: "",
       star: 0,
@@ -78,6 +79,7 @@ const initialState = {
       notes: "",
     },
     {
+      id: 0,
       characterId: 0,
       icon: "",
       star: 0,
@@ -89,7 +91,8 @@ const initialState = {
   ],
 };
 
-const initialCharacter = {
+export const initialCharacter = {
+  id: 0,
   characterId: 0,
   icon: "",
   star: 0,
@@ -142,12 +145,14 @@ const reducer = (state, action) => {
   }
 };
 
-export default function AddTeamComp() {
-  const location = useLocation();
-  const { bossId, bossName, icon } = location.state;
-  const navigate = useNavigate();
-
-  const [state, dispatch] = useReducer(reducer, initialState);
+export default function TeamComp({
+  bossName,
+  icon,
+  handleSubmitClick,
+  submitText,
+  teamCompState,
+}) {
+  const [state, dispatch] = useReducer(reducer, teamCompState || initialState);
 
   const handleChange = (key) => (event) =>
     dispatch({
@@ -176,64 +181,21 @@ export default function AddTeamComp() {
   };
 
   const editCharacter = (character, index) => {
-    console.log(character, index);
     dispatch({
       type: actionTypes.EDITCHARACTER,
       payload: { index, character },
     });
   };
 
-  const [
-    addNewTeamComp,
-    { isLoading: addingTeamComp, isSuccess: teamCompAdded },
-  ] = useAddTeamCompMutation();
-
   const canSave =
     state.characters.filter((character) => character.characterId !== 0).length >
     0;
 
-  const onAddTeamCompClicked = async () => {
+  const onSubmitClick = async () => {
     if (canSave) {
-      try {
-        const characters = state.characters
-          .filter((character) => character.characterId !== 0)
-          .map((character) => {
-            return {
-              character_id: character.characterId,
-              star: Number(character.star),
-              rank: Number(character.rank),
-              ue: Number(character.ue),
-              level: Number(character.level),
-              notes: character.notes,
-            };
-          });
-
-        const teamComp = {
-          ...state,
-          boss_id: bossId,
-          video_url: state.videoUrl,
-          teamcomp_characters: characters,
-          phase: state.phase.value,
-          playstyle: state.playstyle.value,
-          expected_damage: Number(state.expectedDamage),
-        };
-        await addNewTeamComp(teamComp).unwrap();
-      } catch (err) {
-        console.log("Failed to save team comp: ", err);
-      }
+      await handleSubmitClick(state);
     }
   };
-
-  if (addingTeamComp) {
-    return (
-      <div className="absolute top-2/4 left-2/4">
-        <AddingTeamComp />
-      </div>
-    );
-  } else if (teamCompAdded) {
-    console.log("Team comp has been added");
-    return navigate("/clanBattle");
-  }
 
   const teamCompInfo = (
     <div className="flex flex-col gap-2 mb-3 xl:w-96 justify-self-center">
@@ -294,13 +256,13 @@ export default function AddTeamComp() {
       <div className="lg:col-span-2 justify-self-center">
         <button
           disabled={!canSave}
-          onClick={onAddTeamCompClicked}
+          onClick={onSubmitClick}
           type="button"
           className="flex items-center justify-center p-3 h-12 bg-stone-100 hover:bg-stone-300 rounded-3xl shadow-xl border-2 border-indigo-400"
         >
           <MdAddCircleOutline size={24} />
           <span className="font-semi-bold text-stone-900 text-2xl">
-            Add Team Comp
+            {submitText}
           </span>
         </button>
       </div>

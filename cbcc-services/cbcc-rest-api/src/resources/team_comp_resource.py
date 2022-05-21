@@ -1,3 +1,4 @@
+from attr import validate
 from src import db
 from flask import request
 from flask_restx import Namespace, Resource, fields
@@ -108,6 +109,54 @@ class SingleTeamComp(Resource):
         )
 
         return team_comp, 200
+
+    @team_comp_namespace.response(200, "Team comp <team_comp_id> was updated!")
+    @team_comp_namespace.response(404, "Team comp <team_comp_id> does not exist")
+    @team_comp_namespace.expect(team_comp, validate=True)
+    def put(self, team_comp_id):
+        put_data = request.get_json()
+
+        # Parse out fields
+        video_url = put_data.get("video_url")
+        expected_damage = put_data.get("expected_damage")
+        notes = put_data.get("notes")
+        phase = put_data.get("phase")
+        playstyle = put_data.get("playstyle")
+        teamcomp_characters = put_data.get("teamcomp_characters")
+
+        response_object = {}
+
+        team_comp : TeamComp = TeamComp.query.get(team_comp_id)
+        if not team_comp:
+            team_comp_namespace.abort(404, f"Team comp {team_comp_id} does not exist")
+
+        # Bulk Delete the team comp characters, and then put in the new ones
+        TeamCompCharacter.query.filter_by(team_comp_id=team_comp_id).delete()
+
+        used_characters = []
+        for character in teamcomp_characters:
+            new_char = TeamCompCharacter(
+                star=character.get("star"),
+                rank=character.get("rank"),
+                ue=character.get("ue"),
+                notes=character.get("notes"),
+                character_id=character.get("character_id"),
+                level=character.get("level")
+            )
+            used_characters.append(new_char)
+
+        team_comp.video_url = video_url
+        team_comp.expected_damage = expected_damage
+        team_comp.notes = notes
+        team_comp.phase = phase
+        team_comp.playstyle = playstyle
+        team_comp.team_comp_characters = used_characters
+
+        db.session.add_all(used_characters)
+        db.session.commit()
+
+        response_object["message"] = f"Team comp {team_comp_id} was updated!"
+        return response_object, 200
     
     @team_comp_namespace.response(200, "Team Comp <team_comp_id> was removed!")
     @team_comp_namespace.response(404, "Team Comp <team_comp_id> does not exist")

@@ -7,7 +7,7 @@ class TeamComp(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     video_url = db.Column(db.String(200))
-    expected_damage = db.Column(db.Integer, nullable=False)
+    expected_damage = db.Column(db.BigInteger, nullable=False)
     notes = db.Column(db.Text)
     phase = db.Column(db.Integer, nullable=False)
     playstyle = db.Column(db.String(80), nullable=False)

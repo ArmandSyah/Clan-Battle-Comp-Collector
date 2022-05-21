@@ -13,11 +13,19 @@ import Loading from "../components/Gif/Loading";
 import Error from "../components/Gif/Error";
 
 const createChracterDisplay = (teamCompCharacter) => {
-  const { star, rank, ue, level, notes, character } = teamCompCharacter;
-  const { icon, unit_name_en: unitName, thematic_en: thematic } = character;
+  const {
+    star,
+    rank,
+    ue,
+    level,
+    notes,
+    icon,
+    unit_name_en: unitName,
+    thematic_en: thematic,
+  } = teamCompCharacter;
 
   return (
-    <Disclosure>
+    <Disclosure key={unitName}>
       {({ open }) => (
         <>
           <Disclosure.Button className="flex justify-between rounded-lg bg-slate-500 px-2 py-1 text-left font-semibold text-stone-100 hover:bg-slate-800 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">

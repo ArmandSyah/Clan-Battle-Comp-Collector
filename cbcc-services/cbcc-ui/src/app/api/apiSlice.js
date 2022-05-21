@@ -10,7 +10,7 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
-  tagTypes: ["ClanBattle"],
+  tagTypes: ["ClanBattle", "TeamComp"],
   endpoints: (builder) => ({
     getCharacters: builder.query({
       query: () => "/characters",
@@ -20,6 +20,24 @@ export const apiSlice = createApi({
     }),
     getTeamComp: builder.query({
       query: (teamCompId) => `/teamcomp/${teamCompId}`,
+      transformResponse: (responseData) => {
+        const teamCompCharacters = responseData["team_comp_characters"].map(
+          (teamCompCharacter) => {
+            const { character: specificCharacterInfo, ...rest } =
+              teamCompCharacter;
+            return {
+              ...rest,
+              ...specificCharacterInfo,
+            };
+          }
+        );
+
+        return {
+          ...responseData,
+          team_comp_characters: teamCompCharacters,
+        };
+      },
+      providesTags: (result, error, arg) => [{ type: "TeamComp", id: arg }],
     }),
     addTeamComp: builder.mutation({
       query: (teamComp) => ({
@@ -27,14 +45,28 @@ export const apiSlice = createApi({
         method: "POST",
         body: teamComp,
       }),
-      invalidatesTags: ["ClanBattle"],
+      invalidatesTags: ["ClanBattle", "TeamComp"],
+    }),
+    updateTeamComp: builder.mutation({
+      query: ({ teamCompId, ...data }) => {
+        const teamComp = data["teamComp"];
+        return {
+          url: `/teamcomp/${teamCompId}`,
+          method: "PUT",
+          body: teamComp,
+        };
+      },
+      invalidatesTags: (result, error, arg) => [
+        "ClanBattle",
+        { type: "TeamComp", id: arg.teamCompId },
+      ],
     }),
     deleteTeamComp: builder.mutation({
       query: (teamCompId) => ({
         url: `/teamcomp/${teamCompId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["ClanBattle"],
+      invalidatesTags: ["ClanBattle", "TeamComp"],
     }),
     getLatestClanBattle: builder.query({
       query: () => "/clanbattle/latest",
@@ -48,6 +80,7 @@ export const {
   useGetCharacterQuery,
   useGetTeamCompQuery,
   useAddTeamCompMutation,
+  useUpdateTeamCompMutation,
   useDeleteTeamCompMutation,
   useGetLatestClanBattleQuery,
 } = apiSlice;

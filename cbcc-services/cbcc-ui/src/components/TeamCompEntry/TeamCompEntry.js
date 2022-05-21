@@ -35,17 +35,17 @@ export default function TeamCompEntry({ teamComp, bossName, icon }) {
         >
           <MdDescription size={36} />
         </Link>
-        <MdEdit size={36} />
+        <Link
+          to={{ pathname: `/editTeamComp/${teamComp["id"]}` }}
+          state={{ bossName: bossName, icon: icon }}
+        >
+          <MdEdit size={36} />
+        </Link>
         <MdDelete
           size={36}
           onClick={openModal}
           className="hover:cursor-pointer"
         />
-        {/* <button
-          onClick={openModal}
-          className="text-indigo-400 hover:border-red-500/50"
-        >
-        </button> */}
       </div>
     );
   };
@@ -60,6 +60,7 @@ export default function TeamCompEntry({ teamComp, bossName, icon }) {
       <div className="grid grid-cols-5">
         {characterIcons.map((character) => (
           <img
+            key={`${teamCompId}-${character.unit_name_en}`}
             src={character.icon}
             className="scale-75 p-0.5 bg-black border rounded object-contain relative"
             alt={character.unit_name_en}
