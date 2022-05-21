@@ -17,16 +17,16 @@ phases:
       - echo building images...
       - >
         docker build \
-          -f services/users/Dockerfile.prod \
+          -f cbcc-services/cbcc-rest-api/Dockerfile.prod \
           -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tsumugi:prod \
-          ./services/users
+          ./cbcc-services/cbcc-rest-api
       - >
         docker build \
-          -f services/client/Dockerfile.prod \
+          -f cbcc-services/cbcc-ui/Dockerfile.prod \
           -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/kokkoro:prod \
           --build-arg NODE_ENV=production \
           --build-arg REACT_APP_API_SERVICE_URL=$REACT_APP_API_SERVICE_URL \
-          ./services/client
+          ./cbcc-services/cbcc-ui
   post_build:
     commands:
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tsumugi:prod
