@@ -47,7 +47,7 @@ export default function NavBar() {
           </Link>
         )}
         <div className="text-2xl text-white font-bold self-center mx-auto flex flex-col text-center">
-          <p>Clan Battle Period - Testing with Heroku</p>
+          <p>Clan Battle Period</p>
           <p>
             {convertDate(clanBattleInfo["main_start_date"])} -{" "}
             {convertDate(clanBattleInfo["main_end_date"])}
@@ -56,7 +56,7 @@ export default function NavBar() {
         {showSettings && (
           <IoSettingsSharp
             onClick={openModal}
-            className="text-neutral-600 hover:text-neutral-700 self-center ml-auto cursor-pointer"
+            className="text-neutral-600 hover:text-neutral-700 self-center cursor-pointer"
             size={36}
           />
         )}

@@ -10,6 +10,7 @@ module.exports = {
       xl: "1280px",
       "2xl": "1536px",
       "3xl": "1724px",
+      "4xl": "1920px",
     },
     colors: ({ colors }) => ({
       inherit: colors.inherit,

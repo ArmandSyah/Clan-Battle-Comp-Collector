@@ -34,7 +34,7 @@ export default function TeamCompEntry({ teamComp, bossName, icon }) {
           state={{ bossName: bossName, icon: icon }}
           className="hover:drop-shadow-xl"
         >
-          <MdDescription size={36} />
+          <MdDescription size={36} className="" />
         </Link>
         <Link
           to={{ pathname: `/editTeamComp/${teamComp["id"]}` }}
@@ -51,7 +51,7 @@ export default function TeamCompEntry({ teamComp, bossName, icon }) {
   };
 
   return (
-    <div className="flex flex-col bg-stone-300 rounded-3xl shadow-xl border-2 border-indigo-400 p-3">
+    <div className="flex flex-col bg-stone-300 rounded-3xl shadow-xl border-2 border-indigo-400 p-1">
       <div className="flex gap-2">
         {ExpectedDamageBadge(expected_damage)}
         {TierPlaystyle(phase, playstyle)}

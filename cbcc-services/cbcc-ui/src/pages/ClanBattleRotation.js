@@ -79,7 +79,7 @@ export default function ClanBattleRotation() {
   } else if (isSuccess) {
     const bosses = clanBattleInfo["bosses"];
     return bosses ? (
-      <div className="grid grid-cols-1 3xl:grid-cols-5 gap-3 px-4 pt-6 flex-wrap">
+      <div className="grid grid-cols-1 md:grid-cols-3 4xl:grid-cols-5 gap-3 px-4 pt-6 flex-wrap">
         {bosses.map(ClanBattleRotationBossSection)}
       </div>
     ) : (
