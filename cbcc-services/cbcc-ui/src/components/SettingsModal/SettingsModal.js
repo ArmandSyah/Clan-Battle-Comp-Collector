@@ -8,6 +8,7 @@ import {
 } from "../../app/api/settingsSlice";
 import CharacterSelector from "../CharacterSelector/CharacterSelector";
 import ListboxComponent from "../ListboxComponent/ListboxComponent";
+import { MdClose } from "react-icons/md";
 
 const playstyles = [
   { id: 0, label: "All", value: "all" },
@@ -64,7 +65,7 @@ export default function SettingsModal({ settingsModalIsOpen, closeModal }) {
                 className="inline-flex justify-center px-2 py-1 text-sm font-medium text-gray-300 border border-transparent rounded hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
                 onClick={closeModal}
               >
-                X
+                <MdClose />
               </button>
             </Dialog.Title>
             <div className="flex flex-col mt-4 gap-4">

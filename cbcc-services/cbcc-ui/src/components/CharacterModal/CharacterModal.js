@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import CharacterSelector from "../CharacterSelector/CharacterSelector";
 import Input from "../Input/Input";
 import emptyIcon from "../../image/default.png";
+import { MdClose } from "react-icons/md";
 
 const initialState = {
   characterId: 0,
@@ -126,7 +127,7 @@ export default function CharacterModal({
                   className="inline-flex justify-center px-2 py-1 text-sm font-medium text-gray-300 border border-transparent rounded hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
                   onClick={closeModal}
                 >
-                  X
+                  <MdClose />
                 </button>
               </div>
             </Dialog.Title>

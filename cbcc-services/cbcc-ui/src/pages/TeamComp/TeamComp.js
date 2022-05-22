@@ -5,6 +5,7 @@ import BossHeader from "../../components/BossHeader/BossHeader";
 import Input from "../../components/Input/Input";
 import ListboxComponent from "../../components/ListboxComponent/ListboxComponent";
 import TeamCompPreview from "../../components/TeamCompPreview/TeamCompPreview";
+import rehypeSanitize from "rehype-sanitize";
 
 export const phases = [
   { id: 1, label: "Tier 1", value: 1 },
@@ -249,6 +250,9 @@ export default function TeamComp({
             <MDEditor
               value={state.notes}
               onChange={handleSelectChange("notes")}
+              previewOptions={{
+                rehypePlugins: [[rehypeSanitize]],
+              }}
             />
           </div>
         </div>

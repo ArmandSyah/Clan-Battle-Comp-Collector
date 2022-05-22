@@ -11,6 +11,7 @@ import NoVideoFound from "../components/Gif/NoVideoFound";
 import NoNotesfound from "../components/Gif/NoNotesFound";
 import Loading from "../components/Gif/Loading";
 import Error from "../components/Gif/Error";
+import rehypeSanitize from "rehype-sanitize";
 
 const isValidUrl = (possibleUrl) => {
   let url;
@@ -117,6 +118,9 @@ export default function ViewTeamComp() {
     const NotesSection = (
       <MDEditor.Markdown
         source={notes}
+        previewOptions={{
+          rehypePlugins: [[rehypeSanitize]],
+        }}
         className="max-h-96 overflow-auto"
         linkTarget="_blank"
       />

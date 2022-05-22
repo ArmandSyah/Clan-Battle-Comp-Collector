@@ -1,5 +1,9 @@
-# I will call this service, Tsumugi
+# CBCC-Rest-API (Tsumugi)
 
-Will be your typical REST Api, providing access to the db info provided by Muimi (the data extractor) to clients (like the UI for this app, Kokkoro). It will also handle user authentication as well
+Will be your typical REST Api, providing access to the db info provided by Muimi (the data extractor) to clients (like the UI for this app, Kokkoro). It will also handle user authentication as well (in the future)
 
-This will be built with Python, the Flask-RestX library, with the data stored/retrieved in a Postgres database. Might even add Redis and Flask-Cache for caching certain things
+## Languages/Libraries Used
+- Python
+- Flask-RestX
+- Flask-SQLAlchemy
+- Flask-Migrate

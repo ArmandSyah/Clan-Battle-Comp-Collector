@@ -1,5 +1,7 @@
-# I will call this service, Muimi
+# CBCC-Data-Extractor (Muimi)
 
-Basically, it will read all the required data from the current latest priconne database info, in order to retrieve characters and clan battle boss info. It will populate a database table with that info. That's where the REST API, Tsumugi, will take care of providing that db data to clients through http
+Basically, it will read all the required data from the current latest priconne database info, in order to retrieve characters and clan battle boss info and then push that data into the database controlled by the Rest api.
 
-This service is created with standard Python (nothing fancy for now), will probably put the cleaned data into a Postgresql database
+If you're interested in running this project locally, you will need to configure and run this data extractor
+
+TODO: set up data extractor instructions
