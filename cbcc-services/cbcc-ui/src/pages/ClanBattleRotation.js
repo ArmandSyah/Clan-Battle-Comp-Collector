@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import ClanBattleRotationBoss from "../components/ClanBattleRotationBoss/ClanBattleRotationBoss";
 import TeamCompEntry from "../components/TeamCompEntry/TeamCompEntry";
@@ -17,6 +17,10 @@ export default function ClanBattleRotation() {
     (state) => state.settings.missingCharacterIds
   );
   const filteredPlaystyle = useSelector((state) => state.settings.playstyle);
+
+  useEffect(() => {
+    console.log("Testing out the github actions deploy");
+  }, []);
 
   const TeamCompEntries = (bossName, icon) => (teamComp) => {
     return (
