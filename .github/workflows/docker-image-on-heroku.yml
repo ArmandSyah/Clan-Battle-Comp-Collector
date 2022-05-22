@@ -23,5 +23,5 @@ jobs:
         heroku_app_name: ${{ secrets.HEROKU_APP_NAME }} #Must be unique in Heroku
         email:  ${{ secrets.HEROKU_EMAIL }}
         dockerfile_directory: ./
-        dockerfile_name: Dockerfile
+        dockerfile_name: Dockerfile.deploy
         process_type: web
