@@ -32,20 +32,20 @@ export default function TeamCompEntry({ teamComp, bossName, icon }) {
         <Link
           to={{ pathname: `/viewTeamComp/${teamComp["id"]}` }}
           state={{ bossName: bossName, icon: icon }}
+          className="hover:drop-shadow-xl"
         >
           <MdDescription size={36} />
         </Link>
         <Link
           to={{ pathname: `/editTeamComp/${teamComp["id"]}` }}
           state={{ bossName: bossName, icon: icon }}
+          className="hover:drop-shadow-xl"
         >
           <MdEdit size={36} />
         </Link>
-        <MdDelete
-          size={36}
-          onClick={openModal}
-          className="hover:cursor-pointer"
-        />
+        <div className="hover:drop-shadow-xl hover:cursor-pointer">
+          <MdDelete size={36} onClick={openModal} />
+        </div>
       </div>
     );
   };

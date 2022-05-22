@@ -12,6 +12,18 @@ import NoNotesfound from "../components/Gif/NoNotesFound";
 import Loading from "../components/Gif/Loading";
 import Error from "../components/Gif/Error";
 
+const isValidUrl = (possibleUrl) => {
+  let url;
+
+  try {
+    url = new URL(possibleUrl);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
+};
+
 const createChracterDisplay = (teamCompCharacter) => {
   const {
     star,
@@ -117,7 +129,7 @@ export default function ViewTeamComp() {
         <BossHeader bossName={bossName} icon={icon} />
         {TeamCompInfo}
         <div className="flex flex-col gap-4">
-          {videoUrl ? video : <NoVideoFound />}
+          {isValidUrl(videoUrl) ? video : <NoVideoFound />}
           {TeamComp}
         </div>
         {notes ? NotesSection : <NoNotesfound />}

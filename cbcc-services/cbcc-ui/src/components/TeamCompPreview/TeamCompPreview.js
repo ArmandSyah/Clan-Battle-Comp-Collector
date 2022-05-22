@@ -84,7 +84,9 @@ export default function TeamCompPreview({
             onClick={openModalInEditMode(true, character, index)}
             alt="icon"
             src={icon ? icon : emptyIcon}
-            className="min-w-0"
+            className={`min-w-0 ${
+              icon ? "hover:cursor-pointer hover:shadow-xl" : ""
+            }`}
           />
           <div>Star: {star ? star : "-"}</div>
           <div>Rank: {rank ? rank : "-"}</div>

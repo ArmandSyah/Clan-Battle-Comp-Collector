@@ -4,6 +4,7 @@ import ClanBattleRotationBoss from "../components/ClanBattleRotationBoss/ClanBat
 import TeamCompEntry from "../components/TeamCompEntry/TeamCompEntry";
 import { useGetLatestClanBattleQuery } from "../app/api/apiSlice";
 import Loading from "../components/Gif/Loading";
+import Error from "../components/Gif/Error";
 
 export default function ClanBattleRotation() {
   const {
@@ -69,18 +70,20 @@ export default function ClanBattleRotation() {
     );
   };
 
-  let bosses;
-  if (isSuccess) {
-    bosses = clanBattleInfo["bosses"];
+  if (isLoading || isFetching) {
+    return (
+      <div className="absolute top-2/4 left-2/4">
+        <Loading />
+      </div>
+    );
+  } else if (isSuccess) {
+    const bosses = clanBattleInfo["bosses"];
+    return bosses ? (
+      <div className="grid grid-cols-1 3xl:grid-cols-5 gap-3 px-4 pt-6 flex-wrap">
+        {bosses.map(ClanBattleRotationBossSection)}
+      </div>
+    ) : (
+      <Error />
+    );
   }
-
-  return isLoading || isFetching ? (
-    <div className="absolute top-2/4 left-2/4">
-      <Loading />
-    </div>
-  ) : (
-    <div className="grid grid-cols-1 3xl:grid-cols-5 gap-3 px-4 pt-6 flex-wrap">
-      {bosses.map(ClanBattleRotationBossSection)}
-    </div>
-  );
 }
