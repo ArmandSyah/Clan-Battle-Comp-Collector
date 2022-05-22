@@ -47,7 +47,7 @@ export default function NavBar() {
           </Link>
         )}
         <div className="text-2xl text-white font-bold self-center mx-auto flex flex-col text-center">
-          <p>Clan Battle Period</p>
+          <p>Clan Battle Period - Testing with Heroku</p>
           <p>
             {convertDate(clanBattleInfo["main_start_date"])} -{" "}
             {convertDate(clanBattleInfo["main_end_date"])}
