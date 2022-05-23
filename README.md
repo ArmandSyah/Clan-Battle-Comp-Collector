@@ -20,6 +20,7 @@ This project is split into 3 different projects, each fulfilling a specific purp
 - [ ] Experiment with different fonts to find something more visually appealing
 - [ ] Put some strict limits on the inputs of various places
 - [ ] Add help tooltips
+- [ ] Fix UI issues that showed up on mobile resolutions
 - [ ] DRY up code
 
 ## Requirements
