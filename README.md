@@ -9,9 +9,9 @@ CBCC allows people to add new team compositions with detailed notes, specific ch
 
 This project is split into 3 different projects, each fulfilling a specific purpose (also I named each of them after my favourite characters in the game)
 
-- `cbcc-data-extractor (Muimi)`: Handles seeding the database with character, boss and clan battle schedule info from the game. Only useful if you wish to do development on this project, otherwise not useful for anyone else.
-- `cbcc-rest-api (Tsumugi)`: The backend API for this project. Allows access (mainly to the UI portion) to character and boss information. It also provides endpoints to add and store team comps  
-- `cbcc-ui (Kokkoro)`: The UI for this project, allowing users to view, create, update and delete team compositions
+- `cbcc-data-extractor (Muimi)`: Handles seeding the database with character, boss and clan battle schedule info from the game. Only useful if you wish to do development on this project, otherwise not useful for anyone else. Built with Python
+- `cbcc-rest-api (Tsumugi)`: The backend API for this project. Allows access (mainly to the UI portion) to character and boss information. It also provides endpoints to add and store team comps. Build with Python and Flask-RestX  
+- `cbcc-ui (Kokkoro)`: The UI for this project, allowing users to view, create, update and delete team compositions. Built with ES6 and React primarily.
 
 ### Things to do/Features to be added
 - [ ] Realtime updates of the main page upon team comps being added, editted or deleted

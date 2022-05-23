@@ -30,5 +30,5 @@ yandex_translate=false
 microsoft_translate=true
 
 [aws]
-s3_bucket=cbcc-static
-s3_region_name=us-east-1
+s3_bucket=
+s3_region_name=
